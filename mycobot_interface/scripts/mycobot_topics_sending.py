@@ -34,7 +34,7 @@ class MycobotTopics(object):
         self.mc = MyCobot(port, baud)
         self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
         self.cmd_angle_sub = rospy.Subscriber(
-            "mycobot/angles_goal", MycobotSetAngles, callback=callback
+            "mycobot/angles_goal", MycobotSetAngles, callback=self.cmd_angle_callback
         )
         self.cur_cmd_angles = []
         self.cur_cmd_speed = 0
@@ -50,7 +50,7 @@ class MycobotTopics(object):
             ]
         self.cur_cmd_speed = int(msg.speed)
 
-    def get_and_publish_real_angles():
+    def get_and_publish_real_angles(self):
         ma = MycobotAngles()
         rospy.info("reading angles")
         angles = self.mc.get_angles()
@@ -61,20 +61,19 @@ class MycobotTopics(object):
         ma.joint_4 = angles[3]
         ma.joint_5 = angles[4]
         ma.joint_6 = angles[5]
-        self.pub_real_angles.publish(ma)
+        self.real_angle_pub.publish(ma)
         rospy.info("published angles")
         return ma
     
-    def set_cur_cmd_angles():
+    def set_cur_cmd_angles(self):
         rospy.info("sending cmd angles")
         self.mc.send_angles(self.cur_cmd_angles, self.cur_cmd_speed)
         rospy.info("sent cmd angles")
 
     def main(self):
-        
         while not rospy.is_shutdown():
-            get_and_publish_real_angles()
-            set_cur_cmd_angles()
+            self.get_and_publish_real_angles()
+            self.set_cur_cmd_angles()
             
 
     def start(self):
