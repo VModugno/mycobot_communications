@@ -49,27 +49,27 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(FILES
-  MycobotAngles.msg
-  MycobotCoords.msg
-  MycobotSetAngles.msg
-  MycobotSetCoords.msg
-  MycobotGripperStatus.msg
-  MycobotPumpStatus.msg
-)
+#add_message_files(FILES
+#  MycobotAngles.msg
+#  MycobotCoords.msg
+#  MycobotSetAngles.msg
+#  MycobotSetCoords.msg
+#  MycobotGripperStatus.msg
+#  MycobotPumpStatus.msg
+#)
 
 ## Generate services in the 'srv' folder
-add_service_files(FILES 
-  GetAngles.srv
-  SetAngles.srv
-  GetCoords.srv
-  SetCoords.srv
-  GripperStatus.srv
-  PumpStatus.srv
-)
+#add_service_files(FILES 
+#  GetAngles.srv
+#  SetAngles.srv
+#  GetCoords.srv
+#  SetCoords.srv
+#  GripperStatus.srv
+#  PumpStatus.srv
+#)
 
 ## Generate added messages and services
-generate_messages(DEPENDENCIES std_msgs)
+#generate_messages(DEPENDENCIES std_msgs)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -171,6 +171,7 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/mycobot_services.py
   scripts/mycobot_topics.py
+  scripts/mycobot_topics_sending.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

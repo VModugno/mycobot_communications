@@ -2,7 +2,7 @@
 <package format="2">
   <name>mycobot_msgs</name>
   <version>0.1.0</version>
-  <description>The mycobot_commuication package</description>
+  <description>The mycobot messages package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
