@@ -8,7 +8,7 @@ import threading
 
 import rospy
 
-from mycobot_communication.msg import (
+from mycobot_msgs.msg import (
     MycobotAngles,
     MycobotSetAngles,
     MycobotCoords,
