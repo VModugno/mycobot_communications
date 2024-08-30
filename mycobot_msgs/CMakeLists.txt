@@ -58,16 +58,6 @@ add_message_files(FILES
   MycobotPumpStatus.msg
 )
 
-## Generate services in the 'srv' folder
-add_service_files(FILES 
-  GetAngles.srv
-  SetAngles.srv
-  GetCoords.srv
-  SetCoords.srv
-  GripperStatus.srv
-  PumpStatus.srv
-)
-
 ## Generate added messages and services
 generate_messages(DEPENDENCIES std_msgs)
 
