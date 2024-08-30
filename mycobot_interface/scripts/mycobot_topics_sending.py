@@ -73,7 +73,8 @@ class MycobotTopics(object):
     def main(self):
         while not rospy.is_shutdown():
             self.get_and_publish_real_angles()
-            self.set_cur_cmd_angles()
+            if self.cur_cmd_angles:
+                self.set_cur_cmd_angles()
             
 
     def start(self):
