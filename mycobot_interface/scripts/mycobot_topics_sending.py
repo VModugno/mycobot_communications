@@ -1,10 +1,4 @@
 #!/usr/bin/env python2
-import copy
-import time
-import os
-import sys
-import signal
-import threading
 
 import rospy
 
@@ -23,41 +17,49 @@ class CurAngles:
     def __init__(self, angles, speed):
         self.angles = angles
         self.speed = speed
+
     def __eq__(self, other):
         if isinstance(other, CurAngles):
             return self.angles == other.angles and self.speed == other.speed
         return False
+
     def __ne__(self, other):
         # needed in python 2
         return not self.__eq__(other)
+
 
 class CurGripperState:
     def __init__(self, state, speed):
         self.state = state
         self.speed = speed
+
     def __eq__(self, other):
         if isinstance(other, CurGripperState):
             return self.state == other.state and self.speed == other.speed
         return False
+
     def __ne__(self, other):
         # needed in python 2
         return not self.__eq__(other)
+
 
 class CurPumpStatus:
     def __init__(self, state, pin_1, pin_2):
         self.state = state
         self.pin_1 = pin_1
         self.pin_2 = pin_2
+
     def __eq__(self, other):
         if isinstance(other, CurPumpStatus):
             return self.state == other.state and self.pin_1 == other.pin_1 and self.pin_2 == other.pin_2
         return False
+
     def __ne__(self, other):
         # needed in python 2
         return not self.__eq__(other)
 
-class MycobotTopics(object):
 
+class MycobotTopics(object):
 
     def __init__(self):
         super(MycobotTopics, self).__init__()
@@ -69,16 +71,20 @@ class MycobotTopics(object):
         self.publish_real_coords = rospy.get_param("~pub_real_coords", False)
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
-        self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
+        self.real_angle_pub = rospy.Publisher(
+            "mycobot/angles_real", MycobotAngles, queue_size=5)
         self.cmd_angle_sub = rospy.Subscriber(
             "mycobot/angles_goal", MycobotSetAngles, callback=self.cmd_angle_callback
         )
-        self.gripper_status_sub = rospy.Subscriber("mycobot/gripper_status", MycobotGripperStatus, self.gripper_status_callback)
-        self.pump_status_sub = rospy.Subscriber("mycobot/pump_status", MycobotPumpStatus, callback=self.pump_status_callback)
+        self.gripper_status_sub = rospy.Subscriber(
+            "mycobot/gripper_status", MycobotGripperStatus, self.gripper_status_callback)
+        self.pump_status_sub = rospy.Subscriber(
+            "mycobot/pump_status", MycobotPumpStatus, callback=self.pump_status_callback)
 
         if self.publish_real_coords:
-            self.real_coords_pub = rospy.Publisher("mycobot/coords_real", MycobotCoords, queue_size=5)
-        
+            self.real_coords_pub = rospy.Publisher(
+                "mycobot/coords_real", MycobotCoords, queue_size=5)
+
         self.cur_angles = CurAngles([], 0)
         self.prev_angles = CurAngles([], 0)
 
@@ -88,16 +94,15 @@ class MycobotTopics(object):
         self.cur_pump_status = CurPumpStatus(0, 0, 0)
         self.prev_pump_status = CurPumpStatus(0, 0, 0)
 
-
     def cmd_angle_callback(self, msg):
         cur_cmd_angles = [
-                msg.joint_1,
-                msg.joint_2,
-                msg.joint_3,
-                msg.joint_4,
-                msg.joint_5,
-                msg.joint_6,
-            ]
+            msg.joint_1,
+            msg.joint_2,
+            msg.joint_3,
+            msg.joint_4,
+            msg.joint_5,
+            msg.joint_6,
+        ]
         cur_cmd_speed = int(msg.speed)
 
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
@@ -111,7 +116,7 @@ class MycobotTopics(object):
         state = msg.state
         pin_1 = msg.pin_1
         pin_2 = msg.pin_2
-        self.cur_pump_status = CurPumpStatus(state, pin_1, pin_2)     
+        self.cur_pump_status = CurPumpStatus(state, pin_1, pin_2)
 
     def get_and_publish_real_angles(self):
         msg = MycobotAngles()
@@ -143,26 +148,28 @@ class MycobotTopics(object):
             msg.rz = coords[5]
             self.real_coords_pub.publish(msg)
             rospy.loginfo("published coords")
-    
+
     def set_cur_cmd_angles(self):
         rospy.loginfo("sending cmd angles")
         self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
         self.prev_angles = self.cur_angles
         rospy.loginfo("sent cmd angles")
-    
+
     def set_cur_gripper_state(self):
         rospy.loginfo("sending gripper state")
-        self.mc.set_gripper_state(self.cur_gripper_state.state, self.cur_gripper_state.speed)
+        self.mc.set_gripper_state(
+            self.cur_gripper_state.state, self.cur_gripper_state.speed)
         self.prev_gripper_state = self.cur_gripper_state
         rospy.loginfo("sent gripper state")
 
     def set_cur_pump_status(self):
         rospy.loginfo("sending pump status")
-        self.mc.set_basic_output(self.cur_pump_status.pin_1, self.cur_pump_status.state)
-        self.mc.set_basic_output(self.cur_pump_status.pin_2, self.cur_pump_status.state)
+        self.mc.set_basic_output(
+            self.cur_pump_status.pin_1, self.cur_pump_status.state)
+        self.mc.set_basic_output(
+            self.cur_pump_status.pin_2, self.cur_pump_status.state)
         self.prev_pump_status = self.cur_pump_status
         rospy.loginfo("sent pump status")
-
 
     def main(self):
         while not rospy.is_shutdown():
@@ -175,6 +182,7 @@ class MycobotTopics(object):
                 self.set_cur_gripper_state()
             if self.cur_pump_status != self.prev_pump_status:
                 self.set_cur_pump_status()
+
 
 if __name__ == "__main__":
     mc_topics = MycobotTopics()
