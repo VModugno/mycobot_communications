@@ -18,21 +18,34 @@ from mycobot_communication.msg import (
 
 from pymycobot.mycobot import MyCobot
 
+
 class CurAngles:
     def __init__(self, angles, speed):
         self.angles = angles
         self.speed = speed
+    def __eq__(self, other):
+        if isinstance(other, CurAngles):
+            return self.angles == other.angles and self.speed == other.speed
+        return False
 
 class CurGripperState:
     def __init__(self, state, speed):
         self.state = state
         self.speed = speed
+    def __eq__(self, other):
+        if isinstance(other, CurGripperState):
+            return self.state == other.state and self.speed == other.speed
+        return False
 
 class CurPumpStatus:
     def __init__(self, state, pin_1, pin_2):
         self.state = state
         self.pin_1 = pin_1
         self.pin_2 = pin_2
+    def __eq__(self, other):
+        if isinstance(other, CurPumpStatus):
+            return self.state == other.state and self.pin_1 == other.pin_1 and self.pin_2 == other.pin_2
+        return False
 
 class MycobotTopics(object):
 
