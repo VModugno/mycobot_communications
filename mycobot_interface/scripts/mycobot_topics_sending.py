@@ -27,6 +27,9 @@ class CurAngles:
         if isinstance(other, CurAngles):
             return self.angles == other.angles and self.speed == other.speed
         return False
+    def __ne__(self, other):
+        # needed in python 2
+        return not self.__eq__(other)
 
 class CurGripperState:
     def __init__(self, state, speed):
@@ -36,6 +39,9 @@ class CurGripperState:
         if isinstance(other, CurGripperState):
             return self.state == other.state and self.speed == other.speed
         return False
+    def __ne__(self, other):
+        # needed in python 2
+        return not self.__eq__(other)
 
 class CurPumpStatus:
     def __init__(self, state, pin_1, pin_2):
@@ -46,6 +52,9 @@ class CurPumpStatus:
         if isinstance(other, CurPumpStatus):
             return self.state == other.state and self.pin_1 == other.pin_1 and self.pin_2 == other.pin_2
         return False
+    def __ne__(self, other):
+        # needed in python 2
+        return not self.__eq__(other)
 
 class MycobotTopics(object):
 
