@@ -9,37 +9,73 @@ import rospy
 
 from mycobot_communication.msg import (
     MycobotAngles,
+    MycobotSetAngles,
     MycobotCoords,
     MycobotGripperStatus,
     MycobotPumpStatus,
 )
 
 from pymycobot.mycobot import MyCobot
-from pymycobot import PI_PORT, PI_BAUD
 
 
 
 
 class MycobotTopics(object):
+
+
     def __init__(self):
         super(MycobotTopics, self).__init__()
 
         rospy.init_node("mycobot_topics_sending")
         rospy.loginfo("start ...")
-        port = rospy.get_param("~port", PI_PORT)
-        baud = rospy.get_param("~baud", PI_BAUD)
+        port = rospy.get_param("~port", "/dev/ttyAMA0")
+        baud = rospy.get_param("~baud", 1000000)
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
         self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
+        self.cmd_angle_sub = = rospy.Subscriber(
+            "mycobot/angles_goal", MycobotSetAngles, callback=callback
+        )
+        self.cur_cmd_angles = []
+        self.cur_cmd_speed = 0
+
+    def cmd_angle_callback(self, msg):
+        self.cur_cmd_angles = [
+                msg.joint_1,
+                msg.joint_2,
+                msg.joint_3,
+                msg.joint_4,
+                msg.joint_5,
+                msg.joint_6,
+            ]
+        self.cur_cmd_speed = int(msg.speed)
+
+    def get_and_publish_real_angles():
+        ma = MycobotAngles()
+        rospy.info("reading angles")
+        angles = self.mc.get_angles()
+        rospy.info("read angles")
+        ma.joint_1 = angles[0]
+        ma.joint_2 = angles[1]
+        ma.joint_3 = angles[2]
+        ma.joint_4 = angles[3]
+        ma.joint_5 = angles[4]
+        ma.joint_6 = angles[5]
+        self.pub_real_angles.publish(ma)
+        rospy.info("published angles")
+        return ma
+    
+    def set_cur_cmd_angles():
+        rospy.info("sending cmd angles")
+        self.mc.send_angles(self.cur_cmd_angles, self.cur_cmd_speed)
+        rospy.info("sent cmd angles")
 
     def main(self):
-        ma = MycobotAngles()
+        
         while not rospy.is_shutdown():
-            start_time = time.time()
-            angles = self.mc.get_angles()
-            elapsed_time = time.time() - start_time 
-            print(angles)
-            print('elapsed time:', elapsed_time)
+            get_and_publish_real_angles()
+            set_cur_cmd_angles()
+            
 
     def start(self):
         pa = threading.Thread(target=self.pub_real_angles)
