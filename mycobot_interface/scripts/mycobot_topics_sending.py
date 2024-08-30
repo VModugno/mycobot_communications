@@ -33,7 +33,7 @@ class MycobotTopics(object):
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
         self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
-        self.cmd_angle_sub = = rospy.Subscriber(
+        self.cmd_angle_sub = rospy.Subscriber(
             "mycobot/angles_goal", MycobotSetAngles, callback=callback
         )
         self.cur_cmd_angles = []
