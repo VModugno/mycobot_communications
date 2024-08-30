@@ -15,6 +15,7 @@ from mycobot_communication.msg import (
 )
 
 from pymycobot.mycobot import MyCobot
+from pymycobot import PI_PORT, PI_BAUD
 
 
 
@@ -25,11 +26,20 @@ class MycobotTopics(object):
 
         rospy.init_node("mycobot_topics_sending")
         rospy.loginfo("start ...")
-        port = rospy.get_param("~port", "/dev/ttyUSB0")
-        baud = rospy.get_param("~baud", 115200)
+        port = rospy.get_param("~port", PI_PORT)
+        baud = rospy.get_param("~baud", PI_BAUD)
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
-        self.lock = threading.Lock()
+        self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
+
+    def main(self):
+        ma = MycobotAngles()
+        while not rospy.is_shutdown():
+            start_time = time.time()
+            angles = self.mc.get_angles()
+            elapsed_time = time.time() - start_time 
+            print(angles)
+            print('elapsed time:', elapsed_time)
 
     def start(self):
         pa = threading.Thread(target=self.pub_real_angles)
@@ -57,7 +67,7 @@ class MycobotTopics(object):
         while not rospy.is_shutdown():
             #self.lock.acquire()
             start_time = time.time()
-            angles = self.mc.get_servo_temps()
+            angles = self.mc.get_angles()
             elapsed_time = time.time() - start_time 
             print(angles)
             print('elapsed time:', elapsed_time)
@@ -121,8 +131,7 @@ class MycobotTopics(object):
 
 if __name__ == "__main__":
     mc_topics = MycobotTopics()
-    mc_topics.start()
+    mc_topics.main()
     # while True:
     #     mc_topics.pub_real_coords()
     # mc_topics.sub_set_angles()
-    pass
