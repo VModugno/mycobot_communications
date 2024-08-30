@@ -26,6 +26,6 @@ roscore
 In another terminal bring up the arm controller:
 
 ```
-roslaunch mycobot_interface commmunication_service.launch port:=/dev/ttyAMA0
+roslaunch mycobot_interface communication_topic.launch port:=/dev/ttyAMA0
 ```
 
