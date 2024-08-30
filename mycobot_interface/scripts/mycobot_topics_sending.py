@@ -33,6 +33,7 @@ class MycobotTopics(object):
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
         self.real_angle_pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
+        self.real_coords_pub = rospy.Publisher("mycobot/coords_real", MycobotCoords, queue_size=5)
         self.cmd_angle_sub = rospy.Subscriber(
             "mycobot/angles_goal", MycobotSetAngles, callback=self.cmd_angle_callback
         )
@@ -51,19 +52,35 @@ class MycobotTopics(object):
         self.cur_cmd_speed = int(msg.speed)
 
     def get_and_publish_real_angles(self):
-        ma = MycobotAngles()
+        msg = MycobotAngles()
         rospy.loginfo("reading angles")
         angles = self.mc.get_angles()
         rospy.loginfo("read angles")
-        ma.joint_1 = angles[0]
-        ma.joint_2 = angles[1]
-        ma.joint_3 = angles[2]
-        ma.joint_4 = angles[3]
-        ma.joint_5 = angles[4]
-        ma.joint_6 = angles[5]
-        self.real_angle_pub.publish(ma)
+        msg.joint_1 = angles[0]
+        msg.joint_2 = angles[1]
+        msg.joint_3 = angles[2]
+        msg.joint_4 = angles[3]
+        msg.joint_5 = angles[4]
+        msg.joint_6 = angles[5]
+        self.real_angle_pub.publish(msg)
         rospy.loginfo("published angles")
-        return ma
+
+    def get_and_publish_real_coords(self):
+        msg = MycobotCoords()
+        rospy.loginfo("reading coords")
+        coords = self.mc.get_coords()
+        rospy.loginfo("read coords")
+        if not coords:
+            rospy.logerror("coords did not come back")
+        else:
+            msg.x = coords[0]
+            msg.y = coords[1]
+            msg.z = coords[2]
+            msg.rx = coords[3]
+            msg.ry = coords[4]
+            msg.rz = coords[5]
+            self.real_coords_pub.publish(msg)
+            rospy.loginfo("published coords")
     
     def set_cur_cmd_angles(self):
         rospy.loginfo("sending cmd angles")
@@ -73,70 +90,10 @@ class MycobotTopics(object):
     def main(self):
         while not rospy.is_shutdown():
             self.get_and_publish_real_angles()
+            self.get_and_publish_real_coords()
             if self.cur_cmd_angles:
                 self.set_cur_cmd_angles()
-            
-
-    def start(self):
-        pa = threading.Thread(target=self.pub_real_angles)
-        #pb = threading.Thread(target=self.pub_real_coords)
-        #sg = threading.Thread(target=self.sub_gripper_status)
-        #sp = threading.Thread(target=self.sub_pump_status)
-
-        pa.setDaemon(True)
-        pa.start()
-        #pb.setDaemon(True)
-        #pb.start()
-        #sg.setDaemon(True)
-        #sg.start()
-        #sp.setDaemon(True)
-        #sp.start()
-
-        pa.join()
-        #pb.join()
-        #sg.join()
-        #sp.join()
-
-    def pub_real_angles(self):
-        pub = rospy.Publisher("mycobot/angles_real", MycobotAngles, queue_size=5)
-        ma = MycobotAngles()
-        while not rospy.is_shutdown():
-            #self.lock.acquire()
-            start_time = time.time()
-            angles = self.mc.get_angles()
-            elapsed_time = time.time() - start_time 
-            print(angles)
-            print('elapsed time:', elapsed_time)
-            #self.lock.release()
-            if angles:
-                pass
-                #ma.joint_1 = angles[0]
-                #ma.joint_2 = angles[1]
-                #ma.joint_3 = angles[2]
-                #ma.joint_4 = angles[3]
-                #ma.joint_5 = angles[4]
-                #ma.joint_6 = angles[5]
-                #pub.publish(ma)
-            #time.sleep(0.25)
-
-    def pub_real_coords(self):
-        pub = rospy.Publisher("mycobot/coords_real", MycobotCoords, queue_size=5)
-        ma = MycobotCoords()
-
-        while not rospy.is_shutdown():
-            self.lock.acquire()
-            coords = self.mc.get_coords()
-            self.lock.release()
-            if coords:
-                ma.x = coords[0]
-                ma.y = coords[1]
-                ma.z = coords[2]
-                ma.rx = coords[3]
-                ma.ry = coords[4]
-                ma.rz = coords[5]
-                pub.publish(ma)
-            #time.sleep(0.25)
-
+        
 
     def sub_gripper_status(self):
         def callback(data):

@@ -19,13 +19,12 @@ source /home/ubuntu/catkin_ws/devel/setup.bash
 ```
 
 From here, we can run rosmaster and our controller code, and try publishing a msg to control the arm.
-In one terminal:
-```
-roscore
-```
-In another terminal bring up the arm controller:
-
+In one terminal bring up the arm controller:
 ```
 roslaunch mycobot_interface communication_topic.launch port:=/dev/ttyAMA0
+```
+In another terminal try to control it by publishing a ros msg:
+```
+rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{joint_1: -50, speed:30}"
 ```
 
