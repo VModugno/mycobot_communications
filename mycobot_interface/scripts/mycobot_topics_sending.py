@@ -52,9 +52,9 @@ class MycobotTopics(object):
 
     def get_and_publish_real_angles(self):
         ma = MycobotAngles()
-        rospy.info("reading angles")
+        rospy.loginfo("reading angles")
         angles = self.mc.get_angles()
-        rospy.info("read angles")
+        rospy.loginfo("read angles")
         ma.joint_1 = angles[0]
         ma.joint_2 = angles[1]
         ma.joint_3 = angles[2]
@@ -62,13 +62,13 @@ class MycobotTopics(object):
         ma.joint_5 = angles[4]
         ma.joint_6 = angles[5]
         self.real_angle_pub.publish(ma)
-        rospy.info("published angles")
+        rospy.loginfo("published angles")
         return ma
     
     def set_cur_cmd_angles(self):
-        rospy.info("sending cmd angles")
+        rospy.loginfo("sending cmd angles")
         self.mc.send_angles(self.cur_cmd_angles, self.cur_cmd_speed)
-        rospy.info("sent cmd angles")
+        rospy.loginfo("sent cmd angles")
 
     def main(self):
         while not rospy.is_shutdown():
