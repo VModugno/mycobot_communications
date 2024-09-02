@@ -11,6 +11,7 @@ from mycobot_msgs.msg import (
 )
 
 from pymycobot.mycobot import MyCobot
+from pymycobot.error import MyCobotDataException
 
 COBOT_JOINT_GOAL_TOPIC = "mycobot/angles_goal"
 COBOT_JOIN_REAL_TOPIC = "mycobot/angles_real"
@@ -157,9 +158,13 @@ class MycobotTopics(object):
 
     def set_cur_cmd_angles(self):
         rospy.loginfo("sending cmd angles")
-        self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
-        self.prev_angles = self.cur_angles
-        rospy.loginfo("sent cmd angles")
+        try:
+            self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
+            self.prev_angles = self.cur_angles
+            rospy.loginfo("sent cmd angles")
+        except MyCobotDataException as err:
+            rospy.logerror("invalid joint command. Command was {}, error was {}".format(self.cur_angles.angles, err))
+            self.cur_angles = self.prev_angles
 
     def set_cur_gripper_state(self):
         rospy.loginfo("sending gripper state")
