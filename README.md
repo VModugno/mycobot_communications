@@ -5,7 +5,7 @@ This is a repo to implement control of the mycobot robotic arm.
 
 ## Setup
 
-First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
+First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)) Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
 
 Then, clone the repo into the catkin workspace on the robot. And build the ros workspace. We will modify our `.bashrc` so that each time we open a terminal we can access the packages here.
 ```
