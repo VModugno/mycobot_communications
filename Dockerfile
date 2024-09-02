@@ -8,7 +8,5 @@ RUN mkdir -p /home/ubuntu/catkin_ws/src
 WORKDIR /home/ubuntu/catkin_ws/src
 RUN git clone https://github.com/VModugno/mycobot_communications.git
 WORKDIR /home/ubuntu/catkin_ws
-RUN apt-get install python3-catkin-tools -y
-RUN source /opt/ros/noetic/setup.bash
-RUN catkin_make
-RUN source devel/setup.bash
+RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; cd /home/ubuntu/catkin_ws; catkin_make'
+RUN echo ". /home/ubuntu/catkin_ws/devel/setup.bash">>/home/ubuntu/.bashrc
