@@ -11,6 +11,13 @@ from mycobot_msgs.msg import (
 )
 
 from pymycobot.mycobot import MyCobot
+from pymycobot.error import MyCobotDataException
+
+COBOT_JOINT_GOAL_TOPIC = "mycobot/angles_goal"
+COBOT_JOIN_REAL_TOPIC = "mycobot/angles_real"
+COBOT_GRIPPER_STATUS_TOPIC = "mycobot/gripper_status"
+COBOT_PUMP_STATUS_TOPIC = "mycobot/pump_status"
+COBOT_END_EFFECTOR_COORDS_TOPIC = "mycobot/coords_real"
 
 
 class CurAngles:
@@ -72,18 +79,18 @@ class MycobotTopics(object):
         rospy.loginfo("%s,%s" % (port, baud))
         self.mc = MyCobot(port, baud)
         self.real_angle_pub = rospy.Publisher(
-            "mycobot/angles_real", MycobotAngles, queue_size=5)
+            COBOT_JOIN_REAL_TOPIC, MycobotAngles, queue_size=5)
         self.cmd_angle_sub = rospy.Subscriber(
-            "mycobot/angles_goal", MycobotSetAngles, callback=self.cmd_angle_callback
+            COBOT_JOINT_GOAL_TOPIC, MycobotSetAngles, callback=self.cmd_angle_callback
         )
         self.gripper_status_sub = rospy.Subscriber(
-            "mycobot/gripper_status", MycobotGripperStatus, self.gripper_status_callback)
+            COBOT_GRIPPER_STATUS_TOPIC, MycobotGripperStatus, self.gripper_status_callback)
         self.pump_status_sub = rospy.Subscriber(
-            "mycobot/pump_status", MycobotPumpStatus, callback=self.pump_status_callback)
+            COBOT_PUMP_STATUS_TOPIC, MycobotPumpStatus, callback=self.pump_status_callback)
 
         if self.publish_real_coords:
             self.real_coords_pub = rospy.Publisher(
-                "mycobot/coords_real", MycobotCoords, queue_size=5)
+                COBOT_END_EFFECTOR_COORDS_TOPIC, MycobotCoords, queue_size=5)
 
         self.cur_angles = CurAngles([], 0)
         self.prev_angles = CurAngles([], 0)
@@ -151,9 +158,13 @@ class MycobotTopics(object):
 
     def set_cur_cmd_angles(self):
         rospy.loginfo("sending cmd angles")
-        self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
-        self.prev_angles = self.cur_angles
-        rospy.loginfo("sent cmd angles")
+        try:
+            self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
+            self.prev_angles = self.cur_angles
+            rospy.loginfo("sent cmd angles")
+        except MyCobotDataException as err:
+            rospy.logerror("invalid joint command. Command was {}, error was {}".format(self.cur_angles.angles, err))
+            self.cur_angles = self.prev_angles
 
     def set_cur_gripper_state(self):
         rospy.loginfo("sending gripper state")
