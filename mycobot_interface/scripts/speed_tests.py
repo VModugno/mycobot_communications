@@ -85,7 +85,7 @@ class MycobotTopics(object):
         AVG_TIMING = {}
         NUM_CALLS = {}
         for func in TIMINGS_DICT.keys():
-            AVG_TIMING[func] = TIMINGS_DICT[func].sum() / len(TIMINGS_DICT[func])
+            AVG_TIMING[func] = sum(TIMINGS_DICT[func]) / len(TIMINGS_DICT[func])
             NUM_CALLS[func] = len(TIMINGS_DICT[func])
         log_msg("average timings")
         avg_str = pprint.pformat(AVG_TIMING)
