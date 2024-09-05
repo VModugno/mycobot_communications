@@ -67,21 +67,25 @@ class MycobotTopics(object):
         self.mc = MyCobot(port, baud)
 
         self.cur_angles = CurRealAngles([])
+        self.encoders = []
 
     @timing
     def get_angles(self):
         angles = self.mc.get_angles()
         self.cur_angles = CurRealAngles(angles)
-    
+
+    @timing
     def get_encoders(self):
         encoders = self.mc.get_encoders()
-
-        return [round(angle * (math.pi / 180), 3) for angle in angles]
+        self.encoders = encoders
 
     def main(self):
         signal.signal(signal.SIGINT, signal_handler)
         while not EXIT_FLAG:
             self.get_angles()
+            self.get_encoders()
+
+        
         AVG_TIMING = {}
         NUM_CALLS = {}
         for func in TIMINGS_DICT.keys():
