@@ -114,7 +114,7 @@ class MycobotController(Node):
             self.get_logger().info("setting up real coordinate publisher ...")
             self.real_coords_pub = self.create_publisher(MycobotCoords, COBOT_END_EFFECTOR_COORDS_TOPIC, 5)
             self.timer_real_coords = self.create_timer(self.get_parameter('pub_real_coords_timer').value,
-                 self.get_and_publish_real_coords())
+                 self.get_and_publish_real_coords)
 
         self.cur_angles = CurAngles([], 0)
         self.prev_angles = CurAngles([], 0)
@@ -126,7 +126,7 @@ class MycobotController(Node):
         self.prev_pump_status = CurPumpStatus(0, 0, 0)
 
         self.timer_real_angles = self.create_timer(self.get_parameter('pub_angle_timer').value,
-                 self.get_and_publish_real_angles())
+                 self.get_and_publish_real_angles)
 
 
     def cmd_angle_callback(self, msg):
