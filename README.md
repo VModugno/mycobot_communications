@@ -40,10 +40,33 @@ average timings
 {'get_angles': 0.10741803957068402, 'get_encoders': 0.10487154255742612}
 number of calls
 {'get_angles': 23, 'get_encoders': 23}
+```
+
+```
+python_version '2.7.17 (default, Feb 27 2021, 15:10:58) \n[GCC 7.5.0]'
+pymycobot_version '2.7.5'
+average timings
+{'get_angles': 0.1082292530271742, 'get_encoders': 0.1065657999780443}
+number of calls
+{'get_angles': 36, 'get_encoders': 36}
+```
+
+```
+python_version '3.8.10 (default, Jul 29 2024, 17:02:10) \n[GCC 9.4.0]'
+pymycobot_version '3.4.9'
+robot_version: 1
+sys_version: 3.1
+robo_id: 0
+basic_firmware_version: None
+atom_version: None
+average timings
+{'get_angles': 0.009076217752048346, 'get_encoders': 0.008493457721475282}
+number of calls
+{'get_angles': 341, 'get_encoders': 341}
 
 ```
 
 
 ```
-docker run -it --volume /home/ubuntu/:/mnt_folder --device /dev/ttyAMA0 test
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder mycobot-noetic
 ```
