@@ -84,7 +84,33 @@ class MycobotTopics(object):
         while not EXIT_FLAG:
             self.get_angles()
             self.get_encoders()
-            print(self.encoders)
+        
+        robo_version = self.mc.get_robot_version()
+        log_msg('robot_version: %r ' % \
+          (robo_version))
+
+          
+        sys_version = self.mc.get_system_version()
+        log_msg('sys_version: %r ' % \
+          (sys_version))
+
+        robo_id = self.mc.get_robot_id()
+        log_msg('robo_id: %r ' % \
+          (robo_id))
+
+
+        basic_version = self.mc.get_basic_version()
+        log_msg('basic_firmware_version: %r ' % \
+          (basic_version))
+
+        atom_version = self.mc.get_atom_version()
+        log_msg('atom_version: %r ' % \
+          (atom_version))
+
+        
+        version = self.mc.version()
+        log_msg('version: %r ' % \
+          (version))
         
         AVG_TIMING = {}
         NUM_CALLS = {}
