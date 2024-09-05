@@ -11,5 +11,4 @@ RUN git clone -b ros2 https://github.com/VModugno/mycobot_communications
 RUN rm -rf mycobot_communications/mycobot_msgs
 RUN rm -rf mycobot_communications/mycobot_interface
 
-RUN source /opt/ros/humble/setup.bash && colcon build --symlink-install
-RUN source install/setup.bash
+RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
