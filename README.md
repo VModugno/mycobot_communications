@@ -30,3 +30,10 @@ In another terminal try to control it by publishing a ros msg:
 rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{joint_1: -50, speed:30}"
 ```
 
+# pymycobot version
+by default on the pi's we have pymycobot==2.7.5 installed.
+this is quite old.
+
+```
+docker run -it --volume /home/ubuntu/:/mnt_folder --device /dev/ttyAMA0 test
+```
