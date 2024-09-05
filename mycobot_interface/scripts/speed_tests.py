@@ -87,28 +87,29 @@ class MycobotTopics(object):
 
         pymycobot_version = pymycobot.__version__
         log_msg('pymycobot_version %r ' % pymycobot_version)
-        
-        robo_version = self.mc.get_robot_version()
-        log_msg('robot_version: %r ' % \
-          (robo_version))
 
-          
-        sys_version = self.mc.get_system_version()
-        log_msg('sys_version: %r ' % \
-          (sys_version))
+        if int(pymycobot_version[0]) > 2:
+            robo_version = self.mc.get_robot_version()
+            log_msg('robot_version: %r ' % \
+            (robo_version))
 
-        robo_id = self.mc.get_robot_id()
-        log_msg('robo_id: %r ' % \
-          (robo_id))
+            
+            sys_version = self.mc.get_system_version()
+            log_msg('sys_version: %r ' % \
+            (sys_version))
+
+            robo_id = self.mc.get_robot_id()
+            log_msg('robo_id: %r ' % \
+            (robo_id))
 
 
-        basic_version = self.mc.get_basic_version()
-        log_msg('basic_firmware_version: %r ' % \
-          (basic_version))
+            basic_version = self.mc.get_basic_version()
+            log_msg('basic_firmware_version: %r ' % \
+            (basic_version))
 
-        atom_version = self.mc.get_atom_version()
-        log_msg('atom_version: %r ' % \
-          (atom_version))
+            atom_version = self.mc.get_atom_version()
+            log_msg('atom_version: %r ' % \
+            (atom_version))
         
         AVG_TIMING = {}
         NUM_CALLS = {}
