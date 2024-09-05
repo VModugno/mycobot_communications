@@ -72,3 +72,13 @@ sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/c
 source devel/setup.bash
 roslaunch mycobot_interface communication_topic.launch
 ```
+
+Atom version we will update with my studio. Use the my studio on the pi. The mystudio that we can download from the current website doesn't seem to have atom version available, just M5. Plug the USB C cable into the top atom port, and then into the pi. This is launchable from the desktop of the pi.
+
+On linux, make it executable and run it. Select mycobot 280, mycobot 280 for Pi, and then login.
+
+```
+https://docs.elephantrobotics.com/docs/gitbook-en/4-BasicApplication/4.1-myStudio/
+PI	RaspberryPI 4B	ubuntu	v18.04.is recommened
+Atom	atomMain	v4.1 is recommended for robots labelled ER28001202200415 and before，or not lablled; v5.1 is recommended for robots lablled ER28001202200416 and after
+```

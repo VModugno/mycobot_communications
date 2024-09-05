@@ -70,6 +70,9 @@ class MycobotTopics(object):
         self.cur_angles = CurRealAngles([])
         self.encoders = []
 
+        if not self.mc.is_controller_connected():
+            raise RuntimeError("not connected with atom")
+
     @timing
     def get_angles(self):
         angles = self.mc.get_angles()
