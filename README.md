@@ -63,10 +63,12 @@ average timings
 {'get_angles': 0.009076217752048346, 'get_encoders': 0.008493457721475282}
 number of calls
 {'get_angles': 341, 'get_encoders': 341}
-
 ```
 
 
 ```
+sudo docker build -t mycobot-noetic -f Dockerfile .
 sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder mycobot-noetic
+source devel/setup.bash
+roslaunch mycobot_interface communication_topic.launch
 ```
