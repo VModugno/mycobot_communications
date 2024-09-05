@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 from functools import wraps
+import pprint
 import signal
 import sys
 from time import time
@@ -8,6 +9,7 @@ from pymycobot.mycobot import MyCobot
 from pymycobot.error import MyCobotDataException
 
 EXIT_FLAG = False
+TIMINGS_DICT = {}
 
 def log_msg(msg):
     print(msg)
@@ -18,11 +20,15 @@ def signal_handler(sig, frame):
     log_msg('You pressed Ctrl+C!')
 
 def timing(f):
+    global TIMINGS_DICT
     @wraps(f)
     def wrap(*args, **kw):
         ts = time()
         result = f(*args, **kw)
         te = time()
+        if TIMINGS_DICT.get(f.__name__, None) is None:
+            TIMINGS_DICT[f.__name__] = []
+        TIMINGS_DICT[f.__name__].append(te-ts)
         log_msg('func:%r args:[%r, %r] took: %2.4f sec' % \
           (f.__name__, args, kw, te-ts))
         return result
@@ -63,14 +69,30 @@ class MycobotTopics(object):
         self.cur_angles = CurRealAngles([])
 
     @timing
-    def get_real_angles(self):
+    def get_angles(self):
         angles = self.mc.get_angles()
         self.cur_angles = CurRealAngles(angles)
+    
+    def get_encoders(self):
+        encoders = self.mc.get_encoders()
+
+        return [round(angle * (math.pi / 180), 3) for angle in angles]
 
     def main(self):
         signal.signal(signal.SIGINT, signal_handler)
         while not EXIT_FLAG:
-            self.get_real_angles()
+            self.get_angles()
+        AVG_TIMING = {}
+        NUM_CALLS = {}
+        for func in TIMINGS_DICT.keys():
+            AVG_TIMING[func] = TIMINGS_DICT[func].sum() / len(TIMINGS_DICT[func])
+            NUM_CALLS[func] = len(TIMINGS_DICT[func])
+        log_msg("average timings")
+        avg_str = pprint.pformat(AVG_TIMING)
+        log_msg(avg_str)
+        log_msg("number of calls")
+        num_str = pprint.pformat(NUM_CALLS)
+        log_msg(num_str)
 
 if __name__ == "__main__":
     mc_topics = MycobotTopics()
