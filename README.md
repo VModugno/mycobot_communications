@@ -35,5 +35,15 @@ by default on the pi's we have pymycobot==2.7.5 installed.
 this is quite old.
 
 ```
+pymycobot_version '2.7.5'
+average timings
+{'get_angles': 0.10741803957068402, 'get_encoders': 0.10487154255742612}
+number of calls
+{'get_angles': 23, 'get_encoders': 23}
+
+```
+
+
+```
 docker run -it --volume /home/ubuntu/:/mnt_folder --device /dev/ttyAMA0 test
 ```

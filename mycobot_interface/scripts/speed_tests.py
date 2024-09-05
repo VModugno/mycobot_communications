@@ -86,6 +86,11 @@ class MycobotTopics(object):
             self.get_angles()
             self.get_encoders()
 
+
+        py_version = sys.version
+        log_msg('python_version %r ' % py_version)
+
+
         pymycobot_version = pymycobot.__version__
         log_msg('pymycobot_version %r ' % pymycobot_version)
 
