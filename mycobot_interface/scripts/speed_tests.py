@@ -84,7 +84,7 @@ class MycobotTopics(object):
         while not EXIT_FLAG:
             self.get_angles()
             self.get_encoders()
-
+            print(self.encoders)
         
         AVG_TIMING = {}
         NUM_CALLS = {}
