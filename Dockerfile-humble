@@ -15,3 +15,5 @@ RUN pip install pymycobot opencv-python
 
 WORKDIR /home/ubuntu/ros2_ws/
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
+
+ENTRYPOINT ["/bin/bash" "-c" ". /opt/ros/humble/setup.bash; ros2 run mycobot_interface_2 cobot_comms"]

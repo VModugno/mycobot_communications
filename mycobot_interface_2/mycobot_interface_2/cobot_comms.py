@@ -141,20 +141,23 @@ class MycobotController(Node):
         cur_cmd_speed = int(msg.speed)
 
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
-        self.set_cur_cmd_angles()
+        if self.cur_angles != self.prev_angles:
+            self.set_cur_cmd_angles()
 
     def gripper_status_callback(self, msg):
         state = msg.state
         speed = msg.speed
         self.cur_gripper_state = CurGripperState(state, speed)
-        self.set_cur_gripper_state()
+        if self.cur_gripper_state != self.prev_gripper_state:
+            self.set_cur_gripper_state()
 
     def pump_status_callback(self, msg):
         state = msg.state
         pin_1 = msg.pin_1
         pin_2 = msg.pin_2
         self.cur_pump_status = CurPumpStatus(state, pin_1, pin_2)
-        self.set_cur_pump_status()
+        if self.cur_pump_status != self.prev_pump_status:
+            self.set_cur_pump_status()
 
     def get_and_publish_real_angles(self):
         msg = MycobotAngles()
