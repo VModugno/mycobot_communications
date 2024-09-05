@@ -7,6 +7,8 @@ This is a repo to implement control of the mycobot robotic arm.
 
 First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)). Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
 
+### Ros 1
+
 Then, clone the repo into the catkin workspace on the robot. And build the ros workspace. We will modify our `.bashrc` so that each time we open a terminal we can access the packages here.
 ```
 cd /home/ubuntu/catkin_ws/src
@@ -28,4 +30,13 @@ roslaunch mycobot_interface communication_topic.launch port:=/dev/ttyAMA0
 In another terminal try to control it by publishing a ros msg:
 ```
 rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{joint_1: -50, speed:30}"
+```
+
+### Ros 2
+For this we will go into a docker container.
+
+```
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder humble-test
+source install/setup.bash
+ros2 run mycobot_interface_2 cobot_comms
 ```
