@@ -5,6 +5,7 @@ import signal
 import sys
 from time import time
 
+import pymycobot
 from pymycobot.mycobot import MyCobot
 from pymycobot.error import MyCobotDataException
 
