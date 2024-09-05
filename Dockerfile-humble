@@ -3,9 +3,9 @@ FROM ros:humble-ros-base
 RUN mkdir -p /home/ubuntu/ros2_ws/src
 WORKDIR /home/ubuntu/ros2_ws
 
-RUN apt update && apt install git nano -y
+RUN apt install git nano -y
 
-RUN apt update && apt install python3-colcon-common-extensions -y
+RUN apt install python3-colcon-common-extensions -y
 
 RUN git clone -b ros2 https://github.com/VModugno/mycobot_communications
 RUN rm -rf mycobot_communications/mycobot_msgs
