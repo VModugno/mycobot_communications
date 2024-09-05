@@ -76,9 +76,9 @@ class MycobotController(Node):
         self.declare_parameter('pub_real_coords_timer', 0.05)
 
         port = self.get_parameter('port').get_parameter_value().string_value
-        baud = self.get_parameter('baud').get_parameter_value().value
+        baud = self.get_parameter('baud').get_parameter_value().integer_value
         
-        self.publish_real_coords = self.get_parameter('pub_real_coords').get_parameter_value().value
+        self.publish_real_coords = self.get_parameter('pub_real_coords').get_parameter_value().bool_value
 
         self.get_logger().info("start ...")
         self.get_logger().info("Params: %s,%s" % (port, baud))
@@ -111,8 +111,9 @@ class MycobotController(Node):
         self.gripper_status_sub  # prevent unused variable warning
   
         if self.publish_real_coords:
+            self.get_logger().info("setting up real coordinate publisher ...")
             self.real_coords_pub = self.create_publisher(MycobotCoords, COBOT_END_EFFECTOR_COORDS_TOPIC, 5)
-            self.timer_real_coords = self.create_timer(self.get_parameter('pub_real_coords_timer').get_parameter_value().value,
+            self.timer_real_coords = self.create_timer(self.get_parameter('pub_real_coords_timer').value,
                  self.get_and_publish_real_coords())
 
         self.cur_angles = CurAngles([], 0)
@@ -124,7 +125,7 @@ class MycobotController(Node):
         self.cur_pump_status = CurPumpStatus(0, 0, 0)
         self.prev_pump_status = CurPumpStatus(0, 0, 0)
 
-        self.timer_real_angles = self.create_timer(self.get_parameter('pub_angle_timer').get_parameter_value().value,
+        self.timer_real_angles = self.create_timer(self.get_parameter('pub_angle_timer').value,
                  self.get_and_publish_real_angles())
 
 

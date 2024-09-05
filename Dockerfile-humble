@@ -1,12 +1,12 @@
 FROM ros:humble-ros-base
 
 RUN mkdir -p /home/ubuntu/ros2_ws/src
-WORKDIR /home/ubuntu/ros2_ws
+
 
 RUN apt update && apt install git nano -y
 
 RUN apt update && apt install python3-colcon-common-extensions -y
-
+WORKDIR /home/ubuntu/ros2_ws/src
 RUN git clone -b ros2 https://github.com/VModugno/mycobot_communications
 RUN rm -rf mycobot_communications/mycobot_msgs
 RUN rm -rf mycobot_communications/mycobot_interface
@@ -16,4 +16,5 @@ RUN pip install pymycobot
 RUN apt-get install libgl1 -y # hidden dep of opencv
 RUN pip install opencv-python # hidden dep of pymycobot
 
+WORKDIR /home/ubuntu/ros2_ws/
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'

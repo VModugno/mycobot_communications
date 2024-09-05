@@ -36,7 +36,7 @@ rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{jo
 For this we will go into a docker container.
 
 ```
-sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder humble-test
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder --rm humble-test
 source install/setup.bash
 ros2 run mycobot_interface_2 cobot_comms
 ```
