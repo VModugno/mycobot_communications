@@ -71,7 +71,9 @@ class MycobotController(Node):
 
         self.declare_parameter('port', '/dev/ttyAMA0')
         self.declare_parameter('baud', 1000000)
+        self.declare_parameter('pub_angle_timer', 0.01)
         self.declare_parameter('pub_real_coords', False)
+        self.declare_parameter('pub_real_coords_timer', 0.05)
 
         port = self.get_parameter('port').get_parameter_value().string_value
         baud = self.get_parameter('baud').get_parameter_value().value
@@ -110,6 +112,8 @@ class MycobotController(Node):
   
         if self.publish_real_coords:
             self.real_coords_pub = self.create_publisher(MycobotCoords, COBOT_END_EFFECTOR_COORDS_TOPIC, 5)
+            self.timer_real_coords = self.create_timer(self.get_parameter('pub_real_coords_timer').get_parameter_value().value,
+                 self.get_and_publish_real_coords())
 
         self.cur_angles = CurAngles([], 0)
         self.prev_angles = CurAngles([], 0)
@@ -119,6 +123,9 @@ class MycobotController(Node):
 
         self.cur_pump_status = CurPumpStatus(0, 0, 0)
         self.prev_pump_status = CurPumpStatus(0, 0, 0)
+
+        self.timer_real_angles = self.create_timer(self.get_parameter('pub_angle_timer').get_parameter_value().value,
+                 self.get_and_publish_real_angles())
 
 
     def cmd_angle_callback(self, msg):
@@ -133,22 +140,28 @@ class MycobotController(Node):
         cur_cmd_speed = int(msg.speed)
 
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
+        self.set_cur_cmd_angles()
 
     def gripper_status_callback(self, msg):
         state = msg.state
         speed = msg.speed
         self.cur_gripper_state = CurGripperState(state, speed)
+        self.set_cur_gripper_state()
 
     def pump_status_callback(self, msg):
         state = msg.state
         pin_1 = msg.pin_1
         pin_2 = msg.pin_2
         self.cur_pump_status = CurPumpStatus(state, pin_1, pin_2)
+        self.set_cur_pump_status()
 
     def get_and_publish_real_angles(self):
         msg = MycobotAngles()
         self.get_logger().debug("reading angles")
         angles = self.mc.get_angles()
+        if angles is None or angles[0] == angles[1] == angles[2] == 0.0:
+            self.get_logger().error("angles came back None or 0.0, {}".format(angles))
+            return
         self.get_logger().debug("read angles")
         msg.joint_1 = angles[0]
         msg.joint_2 = angles[1]
@@ -161,11 +174,11 @@ class MycobotController(Node):
 
     def get_and_publish_real_coords(self):
         msg = MycobotCoords()
-        rospy.logdebug("reading coords")
+        self.get_logger().debug("reading coords")
         coords = self.mc.get_coords()
-        rospy.logdebug("read coords")
+        self.get_logger().debug("read coords")
         if not coords:
-            rospy.logerror("coords did not come back")
+            self.get_logger().error("coords did not come back")
         else:
             msg.x = coords[0]
             msg.y = coords[1]
@@ -174,62 +187,47 @@ class MycobotController(Node):
             msg.ry = coords[4]
             msg.rz = coords[5]
             self.real_coords_pub.publish(msg)
-            rospy.logdebug("published coords")
+            self.get_logger().debug("published coords")
 
     def set_cur_cmd_angles(self):
-        rospy.logdebug("sending cmd angles")
+        self.get_logger().debug("sending cmd angles")
         try:
             self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
             self.prev_angles = self.cur_angles
-            rospy.logdebug("sent cmd angles")
+            self.get_logger().debug("sent cmd angles")
         except MyCobotDataException as err:
-            rospy.logerror("invalid joint command. Command was {}, error was {}".format(self.cur_angles.angles, err))
+            self.get_logger().error("invalid joint command. Command was {}, error was {}".format(self.cur_angles.angles, err))
             self.cur_angles = self.prev_angles
 
     def set_cur_gripper_state(self):
-        rospy.logdebug("sending gripper state")
+        self.get_logger().debug("sending gripper state")
         self.mc.set_gripper_state(
             self.cur_gripper_state.state, self.cur_gripper_state.speed)
         self.prev_gripper_state = self.cur_gripper_state
-        rospy.logdebug("sent gripper state")
+        self.get_logger().debug("sent gripper state")
 
     def set_cur_pump_status(self):
-        rospy.logdebug("sending pump status")
+        self.get_logger().debug("sending pump status")
         self.mc.set_basic_output(
             self.cur_pump_status.pin_1, self.cur_pump_status.state)
         self.mc.set_basic_output(
             self.cur_pump_status.pin_2, self.cur_pump_status.state)
         self.prev_pump_status = self.cur_pump_status
-        rospy.logdebug("sent pump status")
-
-    def main(self):
-        while not rospy.is_shutdown():
-            self.get_and_publish_real_angles()
-            if self.publish_real_coords:
-                self.get_and_publish_real_coords()
-            if self.cur_angles != self.prev_angles:
-                self.set_cur_cmd_angles()
-            if self.cur_gripper_state != self.prev_gripper_state:
-                self.set_cur_gripper_state()
-            if self.cur_pump_status != self.prev_pump_status:
-                self.set_cur_pump_status()
+        self.get_logger().debug("sent pump status")
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_publisher = MinimalPublisher()
+    mycobot_controller = MycobotController()
 
-    rclpy.spin(minimal_publisher)
+    rclpy.spin(mycobot_controller)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    minimal_publisher.destroy_node()
+    mycobot_controller.destroy_node()
     rclpy.shutdown()
-
-def main():
-    print('Hi from mycobot_interface_2.')
 
 
 if __name__ == '__main__':
