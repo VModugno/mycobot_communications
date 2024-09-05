@@ -11,6 +11,7 @@ RUN git clone -b ros2 https://github.com/VModugno/mycobot_communications
 RUN rm -rf mycobot_communications/mycobot_msgs
 RUN rm -rf mycobot_communications/mycobot_interface
 
+RUN apt install python3-pip
 RUN pip install pymycobot
 RUN apt-get install libgl1 -y # hidden dep of opencv
 RUN pip install opencv-python # hidden dep of pymycobot
