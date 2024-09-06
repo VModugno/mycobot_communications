@@ -6,7 +6,7 @@ RUN mkdir -p /home/ubuntu/ros2_ws/src
 RUN apt update && apt install git nano python3-pip python3-colcon-common-extensions libgl1 -y
 
 WORKDIR /home/ubuntu/ros2_ws/src
-RUN git clone -b ros2 https://github.com/VModugno/mycobot_communications
+RUN git clone https://github.com/VModugno/mycobot_communications
 RUN rm -rf mycobot_communications/mycobot_msgs
 RUN rm -rf mycobot_communications/mycobot_interface
 
