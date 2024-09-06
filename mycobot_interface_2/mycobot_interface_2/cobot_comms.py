@@ -9,6 +9,7 @@ from mycobot_msgs_2.msg import (
     MycobotPumpStatus,
 )
 
+import pymycobot
 from pymycobot.mycobot import MyCobot
 from pymycobot.error import MyCobotDataException
 
@@ -83,7 +84,14 @@ class MycobotController(Node):
         self.get_logger().info("start ...")
         self.get_logger().info("Params: %s,%s" % (port, baud))
 
+        pymycobot_version = pymycobot.__version__
+        self.get_logger().info("pymycobot version: %s" % (pymycobot_version))
+
         self.mc = MyCobot(port, baud)
+
+        is_connected = self.mc.is_controller_connected()
+        if not is_connected:
+            raise RuntimeError("Not connected to the mycobot. Check if the robot is on and the serial port is correct?")
 
         self.real_angle_pub = self.create_publisher(MycobotAngles, COBOT_JOIN_REAL_TOPIC, 5)
 
@@ -206,7 +214,7 @@ class MycobotController(Node):
     def set_cur_gripper_state(self):
         self.get_logger().debug("sending gripper state")
         self.mc.set_gripper_state(
-            self.cur_gripper_state.state, self.cur_gripper_state.speed)
+            int(self.cur_gripper_state.state), self.cur_gripper_state.speed)
         self.prev_gripper_state = self.cur_gripper_state
         self.get_logger().debug("sent gripper state")
 

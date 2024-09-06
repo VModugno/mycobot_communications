@@ -4,7 +4,7 @@ This is a repo to implement control of the MyCobot 280 and specifically the vers
 
 ## Setup
 
-First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)). Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
+First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm, there is a three prong slot near the top of the arm on a side adjacent to the side with the USB C connector (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)). The gripper has a pretty short cable by default, you may need to use one of the extension cables provided to give it more leeway to rotate. Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
 
 Pick ROS 1 or ROS 2. We recommend ROS 2.
 
