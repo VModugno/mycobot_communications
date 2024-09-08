@@ -127,9 +127,9 @@ class MycobotTopics(object):
 
     def get_and_publish_real_angles(self):
         msg = MycobotAngles()
-        rospy.loginfo("reading angles")
+        rospy.logdebug("reading angles")
         angles = self.mc.get_angles()
-        rospy.loginfo("read angles")
+        rospy.logdebug("read angles")
         msg.joint_1 = angles[0]
         msg.joint_2 = angles[1]
         msg.joint_3 = angles[2]
@@ -137,13 +137,13 @@ class MycobotTopics(object):
         msg.joint_5 = angles[4]
         msg.joint_6 = angles[5]
         self.real_angle_pub.publish(msg)
-        rospy.loginfo("published angles")
+        rospy.logdebug("published angles")
 
     def get_and_publish_real_coords(self):
         msg = MycobotCoords()
-        rospy.loginfo("reading coords")
+        rospy.logdebug("reading coords")
         coords = self.mc.get_coords()
-        rospy.loginfo("read coords")
+        rospy.logdebug("read coords")
         if not coords:
             rospy.logerror("coords did not come back")
         else:
@@ -154,33 +154,33 @@ class MycobotTopics(object):
             msg.ry = coords[4]
             msg.rz = coords[5]
             self.real_coords_pub.publish(msg)
-            rospy.loginfo("published coords")
+            rospy.logdebug("published coords")
 
     def set_cur_cmd_angles(self):
-        rospy.loginfo("sending cmd angles")
+        rospy.logdebug("sending cmd angles")
         try:
             self.mc.send_angles(self.cur_angles.angles, self.cur_angles.speed)
             self.prev_angles = self.cur_angles
-            rospy.loginfo("sent cmd angles")
+            rospy.logdebug("sent cmd angles")
         except MyCobotDataException as err:
             rospy.logerror("invalid joint command. Command was {}, error was {}".format(self.cur_angles.angles, err))
             self.cur_angles = self.prev_angles
 
     def set_cur_gripper_state(self):
-        rospy.loginfo("sending gripper state")
+        rospy.logdebug("sending gripper state")
         self.mc.set_gripper_state(
             self.cur_gripper_state.state, self.cur_gripper_state.speed)
         self.prev_gripper_state = self.cur_gripper_state
-        rospy.loginfo("sent gripper state")
+        rospy.logdebug("sent gripper state")
 
     def set_cur_pump_status(self):
-        rospy.loginfo("sending pump status")
+        rospy.logdebug("sending pump status")
         self.mc.set_basic_output(
             self.cur_pump_status.pin_1, self.cur_pump_status.state)
         self.mc.set_basic_output(
             self.cur_pump_status.pin_2, self.cur_pump_status.state)
         self.prev_pump_status = self.cur_pump_status
-        rospy.loginfo("sent pump status")
+        rospy.logdebug("sent pump status")
 
     def main(self):
         while not rospy.is_shutdown():
