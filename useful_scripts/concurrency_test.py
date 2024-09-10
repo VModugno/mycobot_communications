@@ -126,3 +126,10 @@ class MycobotTopics(object):
         loop_rate = 1 / (sum(query_times) / len(query_times))
         log_msg(f"{len(self.cmds_sent)} commands sent, avg loop rate: {loop_rate}")
         log_msg(f"{sum(matched_priors)} matched the command sent, {sum(matched_priors) / len(self.cmds_sent):.2f}%")
+
+def main():
+    arm = MycobotTopics()
+    arm.main()
+
+if __name__ == "__main__":
+    main()
