@@ -49,7 +49,7 @@ class MycobotTopics(object):
         port = "/dev/ttyAMA0"
         baud = 1000000
 
-        self.mc = MyCobot(port, baud, thread_lock=False)
+        self.mc = MyCobot(port, baud, thread_lock=True)
     
         self.angle_queries = []
 
@@ -58,7 +58,7 @@ class MycobotTopics(object):
         self.last_get_angles_time = time.time()
         self.get_angle_thread = threading.Thread(target=self.get_angles)
 
-        self.command_arm_target_hz = 100
+        self.command_arm_target_hz = 20
         self.command_arm_target_seconds = 1 / self.command_arm_target_hz
         self.last_command_arm_time = time.time()
         self.command_speed = 80
@@ -88,7 +88,7 @@ class MycobotTopics(object):
                 time.sleep(self.command_arm_target_seconds - time_since_loop)
             self.last_command_arm_time = time.time()
 
-            cur_angle = math.sin(self.cur_counter * math.pi / 180)
+            cur_angle = math.sin(self.cur_counter * math.pi / 180) * self.max_angle
             self.cur_counter += self.counter_incr
 
             cmd = CmdAngles([cur_angle for i in range(NUM_JOINTS)], self.command_speed, self.last_command_arm_time)
