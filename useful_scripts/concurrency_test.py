@@ -54,7 +54,7 @@ class MycobotTopics(object):
 
         self.use_threading = False
 
-        self.angle_queries = multiprocessing.Array('d', 0)
+        self.angle_queries = multiprocessing.Queue()
 
         self.get_angles_target_hz = 100
         self.get_angles_target_seconds = 1 / self.get_angles_target_hz
@@ -71,7 +71,7 @@ class MycobotTopics(object):
         self.max_angle = 50
         self.cur_counter = 0
         self.counter_incr = 1
-        self.cmds_sent = multiprocessing.Array('d', 0)
+        self.cmds_sent = multiprocessing.Queue()
         if self.use_threading:
             self.cmd_worker = threading.Thread(target=self.command_arm)
         else:
@@ -90,7 +90,7 @@ class MycobotTopics(object):
             self.last_get_angles_time = time.time()
             angles = self.mc.get_angles()
             cur_angles = CurRealAngles(angles, self.last_get_angles_time)
-            self.angle_queries.append(cur_angles)
+            self.angle_queries.put(cur_angles)
     
     def command_arm(self):
         while not self.exit.is_set():
@@ -104,7 +104,7 @@ class MycobotTopics(object):
 
             cmd = CmdAngles([cur_angle for i in range(NUM_JOINTS)], self.command_speed, self.last_command_arm_time)
             self.mc.send_angles(cmd.angles, cmd.speed)
-            self.cmds_sent.append(cmd)
+            self.cmds_sent.put(cmd)
     
     def set_exit(self, signum, frame):
         self.exit.set()
@@ -125,22 +125,28 @@ class MycobotTopics(object):
         # get loop rate of publishing actual angles and how many matched prior
         query_times = []
         matched_priors = []
-        for i in range(1, len(self.angle_queries)):
-            time_to_query = self.angle_queries[i].query_time - self.angle_queries[i - 1].query_time
-            matched_prior = self.angle_queries[i].angles == self.angle_queries[i - 1].angles
+        last_angles = self.angle_queries.get()
+        while self.angle_queries.qsize() > 0:
+            new_angles = self.angle_queries.get()
+            time_to_query = new_angles.query_time - last_angles.query_time
+            matched_prior = new_angles.angles == last_angles.angles
             query_times.append(time_to_query)
             matched_priors.append(matched_prior)
+            last_angles = new_angles
         loop_rate = 1 / (sum(query_times) / len(query_times))
         log_msg(f"{len(self.angle_queries)} joint angle queries, avg loop rate: {loop_rate}")
         log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(self.angle_queries):.2f}%")
 
         query_times = []
         matched_priors = []
-        for i in range(1, len(self.cmds_sent)):
-            time_to_query = self.cmds_sent[i].query_time - self.cmds_sent[i - 1].query_time
-            matched_prior = self.cmds_sent[i].angles == self.cmds_sent[i - 1].angles
+        last_cmd = self.cmds_sent.get()
+        while self.cmds_sent.qsize() > 0:
+            new_cmd = self.cmds_sent.get()
+            time_to_query = new_cmd.query_time - last_cmd.query_time
+            matched_prior = new_cmd.angles == last_cmd.angles
             query_times.append(time_to_query)
             matched_priors.append(matched_prior)
+            last_cmd = new_cmd
         loop_rate = 1 / (sum(query_times) / len(query_times))
         log_msg(f"{len(self.cmds_sent)} commands sent, avg loop rate: {loop_rate}")
         log_msg(f"{sum(matched_priors)} matched the command sent, {sum(matched_priors) / len(self.cmds_sent):.2f}%")
