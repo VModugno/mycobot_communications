@@ -56,13 +56,14 @@ class MycobotTopics(object):
 
         self.angle_queries = multiprocessing.Queue()
 
+        self.exit = multiprocessing.Event()
         self.get_angles_target_hz = 100
         self.get_angles_target_seconds = 1 / self.get_angles_target_hz
         self.last_get_angles_time = time.time()
         if self.use_threading:
-            self.get_angle_worker = threading.Thread(target=self.get_angles)
+            self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit,))
         else:
-            self.get_angle_worker = multiprocessing.Process(target=self.command_arm)
+            self.get_angle_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit,))
 
         self.command_arm_target_hz = 100
         self.command_arm_target_seconds = 1 / self.command_arm_target_hz
@@ -73,17 +74,16 @@ class MycobotTopics(object):
         self.counter_incr = 1
         self.cmds_sent = multiprocessing.Queue()
         if self.use_threading:
-            self.cmd_worker = threading.Thread(target=self.command_arm)
+            self.cmd_worker = threading.Thread(target=self.command_arm, args=(self.exit,))
         else:
-            self.cmd_worker = multiprocessing.Process(target=self.command_arm)
+            self.cmd_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit,))
 
-        self.exit = multiprocessing.Event()
 
         if not self.mc.is_controller_connected():
             raise RuntimeError("not connected with atom")
         
-    def get_angles(self):
-        while not self.exit.is_set():
+    def get_angles(self, exit_event):
+        while not exit_event.is_set():
             time_since_loop = time.time() - self.last_get_angles_time
             if time_since_loop < self.get_angles_target_seconds:
                 time.sleep(self.get_angles_target_seconds - time_since_loop)
@@ -92,8 +92,8 @@ class MycobotTopics(object):
             cur_angles = CurRealAngles(angles, self.last_get_angles_time)
             self.angle_queries.put(cur_angles)
     
-    def command_arm(self):
-        while not self.exit.is_set():
+    def command_arm(self, exit_event):
+        while not exit_event.is_set():
             time_since_loop = time.time() - self.last_command_arm_time
             if time_since_loop < self.command_arm_target_seconds:
                 time.sleep(self.command_arm_target_seconds - time_since_loop)
