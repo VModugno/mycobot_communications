@@ -84,7 +84,7 @@ class MycobotTopics(object):
         
     def get_angles(self, exit_event):
         while not exit_event.is_set():
-            print(exit_event.is_set())
+            print(exit_event.is_set(), flush=True)
             time_since_loop = time.time() - self.last_get_angles_time
             if time_since_loop < self.get_angles_target_seconds:
                 time.sleep(self.get_angles_target_seconds - time_since_loop)
