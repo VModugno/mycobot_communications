@@ -54,7 +54,7 @@ class MycobotTopics(object):
 
         self.use_threading = False
 
-        self.angle_queries = []
+        self.angle_queries = multiprocessing.Array('d', 0)
 
         self.get_angles_target_hz = 100
         self.get_angles_target_seconds = 1 / self.get_angles_target_hz
@@ -71,7 +71,7 @@ class MycobotTopics(object):
         self.max_angle = 50
         self.cur_counter = 0
         self.counter_incr = 1
-        self.cmds_sent = []
+        self.cmds_sent = multiprocessing.Array('d', 0)
         if self.use_threading:
             self.cmd_worker = threading.Thread(target=self.command_arm)
         else:
