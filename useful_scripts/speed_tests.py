@@ -92,6 +92,7 @@ class MycobotTopics(object):
         while not EXIT_FLAG:
             self.get_angles()
             self.get_encoders()
+            self.send_cmds()
 
 
         py_version = sys.version
