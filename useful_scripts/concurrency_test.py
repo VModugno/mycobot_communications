@@ -134,6 +134,7 @@ class MycobotTopics(object):
         last_angles = self.angle_queries.get()
         while self.angle_queries.qsize() > 0:
             new_angles = self.angle_queries.get()
+            log_msg(new_angles.query_time)
             time_to_query = new_angles.query_time - last_angles.query_time
             matched_prior = new_angles.angles == last_angles.angles
             query_times.append(time_to_query)
@@ -148,6 +149,7 @@ class MycobotTopics(object):
         last_cmd = self.cmds_sent.get()
         while self.cmds_sent.qsize() > 0:
             new_cmd = self.cmds_sent.get()
+            log_msg(new_cmd.query_time)
             time_to_query = new_cmd.query_time - last_cmd.query_time
             matched_prior = new_cmd.angles == last_cmd.angles
             query_times.append(time_to_query)
