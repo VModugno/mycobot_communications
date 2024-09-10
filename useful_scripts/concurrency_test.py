@@ -11,6 +11,7 @@ import math
 import pprint
 import signal
 import sys
+import multiprocessing
 import threading
 import time
 
@@ -50,15 +51,20 @@ class MycobotTopics(object):
         baud = 1000000
 
         self.mc = MyCobot(port, baud, thread_lock=True)
-    
+
+        self.use_threading = False
+
         self.angle_queries = []
 
         self.get_angles_target_hz = 100
         self.get_angles_target_seconds = 1 / self.get_angles_target_hz
         self.last_get_angles_time = time.time()
-        self.get_angle_thread = threading.Thread(target=self.get_angles)
+        if self.use_threading:
+            self.get_angle_worker = threading.Thread(target=self.get_angles)
+        else:
+            self.get_angle_worker = multiprocessing.Process(target=self.command_arm)
 
-        self.command_arm_target_hz = 20
+        self.command_arm_target_hz = 100
         self.command_arm_target_seconds = 1 / self.command_arm_target_hz
         self.last_command_arm_time = time.time()
         self.command_speed = 80
@@ -66,7 +72,10 @@ class MycobotTopics(object):
         self.cur_counter = 0
         self.counter_incr = 1
         self.cmds_sent = []
-        self.cmd_thread = threading.Thread(target=self.command_arm)
+        if self.use_threading:
+            self.cmd_worker = threading.Thread(target=self.command_arm)
+        else:
+            self.cmd_worker = multiprocessing.Process(target=self.command_arm)
 
         if not self.mc.is_controller_connected():
             raise RuntimeError("not connected with atom")
@@ -99,10 +108,10 @@ class MycobotTopics(object):
         signal.signal(signal.SIGINT, signal_handler)
         self.mc.send_angles([0] * NUM_JOINTS, 60)
         time.sleep(4)
-        self.cmd_thread.start()
-        self.get_angle_thread.start()
-        self.cmd_thread.join()
-        self.get_angle_thread.join()
+        self.cmd_worker.start()
+        self.get_angle_worker.start()
+        self.cmd_worker.join()
+        self.get_angle_worker.join()
 
         # get loop rate of publishing actual angles and how many matched prior
         query_times = []
