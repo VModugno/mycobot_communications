@@ -121,6 +121,8 @@ class MycobotTopics(object):
         while not self.exit.is_set():
             time.sleep(0.1)
         log_msg("waiting on workers to join")
+        self.cmd_worker.terminate()
+        self.get_angle_worker.terminate()
         self.cmd_worker.join()
         self.get_angle_worker.join()
 
