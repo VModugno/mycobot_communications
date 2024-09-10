@@ -18,7 +18,13 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 sudo docker pull mzandtheraspberrypi/mycobot-ros2:1.0.0
 
+# https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nm-settings-nmcli.html
+# useful options. We want to setup a wifi network and let folks connect to it and get an ip address
+# if someone is using a VM and bridged network setting, the VM has same MAC address
+# we still want to let the VM get an ip address
 nmcli d wifi hotspot ifname wlan0 ssid ${WLAN_SSID} password ${WLAN_PASS} con-name my-hotspot
 nmcli c down my-hotspot
-nmcli connection modify my-hotspot connection.autoconnect yes
+nmcli c modify my-hotspot connection.autoconnect yes
+nmcli c modify my-hotspot connection.autoconnect-priority 999
+
 nmcli c up my-hotspot
