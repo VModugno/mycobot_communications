@@ -16,7 +16,6 @@ sudo apt update
 
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh ./get-docker.sh
-sudo groupadd docker
 sudo usermod -aG docker $USER
 sudo docker pull mzandtheraspberrypi/mycobot-ros2:1.0.0
 

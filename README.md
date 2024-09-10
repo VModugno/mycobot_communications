@@ -4,11 +4,11 @@ This is a repo to implement control of the MyCobot 280 and specifically the vers
 
 ## Setup
 
-I had to update the operating system on the raspberry pi from Ubuntu 18.04 to Ubuntu 20.04. Elephant robotic provides a system image [here](https://www.elephantrobotics.com/en/downloads/) for the mycobot 280 arm. I used the raspberry pi imager tool to flash it to the sd card--importantly I selected to clear the settings the raspberry pi imager has like user/password. I also didn't need to unzip .the .img file to flash it.
-
 First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm, there is a three prong slot near the top of the arm on a side adjacent to the side with the USB C connector (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)). The gripper has a pretty short cable by default, you may need to use one of the extension cables provided to give it more leeway to rotate. Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
 
 Pick ROS 1 or ROS 2. We recommend ROS 2.
+
+Note, you can optionally upgrade the ubuntu image on the arm. But, we haven't yet found this nescessary. Elephant robotic provides a system image [here](https://www.elephantrobotics.com/en/downloads/) for the mycobot 280 arm. I used the raspberry pi imager tool to flash it to the sd card--importantly I selected to clear the settings the raspberry pi imager has like user/password. I also didn't need to unzip .the .img file to flash it.
 
 ### Ros 1
 
@@ -39,7 +39,7 @@ rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{jo
 For this we will go into a docker container. We do this because the Ubuntu version running on the raspberry pi is quite old the ROS2 distro we want to use (humble) doesn't support that old Ubuntu. If you are in a raspberry pi prepared by the lab, it will have docker. If not, install it onto the pi using [this](https://docs.docker.com/engine/install/ubuntu/). You shouldn't need to build any docker image, you can simply pull it from docker hub with the below command.
 
 ```
-sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.0.0
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.0.0
 source install/setup.bash
 export ROS_DOMAIN_ID=10
 ros2 run mycobot_interface_2 cobot_comms
@@ -51,3 +51,10 @@ You can also try moving the robot with something like:
 ```
 ros2 topic pub /mycobot/angles_goal mycobot_msgs_2/msg/MycobotSetAngles "{joint_6: 30, speed: 30}" --once
 ```
+
+## Troubleshooting
+If you can ping the pi, for example the below shows packets sent and received.
+```
+ping 10.42.0.1
+```
+But the pi can't ping your computer, look to your firewall in windows. Try turning it off temporarily.
