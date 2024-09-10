@@ -12,7 +12,7 @@ import pprint
 import signal
 import sys
 import threading
-from time import time
+import time
 
 import pymycobot
 from pymycobot.mycobot import MyCobot
