@@ -83,6 +83,7 @@ class MycobotTopics(object):
             raise RuntimeError("not connected with atom")
         
     def get_angles(self, exit_event):
+        print("getting angles")
         while not exit_event.is_set():
             print(exit_event.is_set(), flush=True)
             time_since_loop = time.time() - self.last_get_angles_time
@@ -92,6 +93,7 @@ class MycobotTopics(object):
             angles = self.mc.get_angles()
             cur_angles = CurRealAngles(angles, self.last_get_angles_time)
             self.angle_queries.put(cur_angles)
+        print("done getting angles")
     
     def command_arm(self, exit_event):
         while not exit_event.is_set():
