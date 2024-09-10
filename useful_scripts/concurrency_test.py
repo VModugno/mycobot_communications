@@ -107,6 +107,7 @@ class MycobotTopics(object):
             self.cmds_sent.put(cmd)
     
     def set_exit(self, signum, frame):
+        log_msg("setting exit")
         self.exit.set()
 
     def main(self):
@@ -118,9 +119,11 @@ class MycobotTopics(object):
 
         while not self.exit.is_set():
             time.sleep(0.1)
-
+        log_msg("waiting on workers to join")
         self.cmd_worker.join()
         self.get_angle_worker.join()
+
+        log_msg("doing metrics")
 
         # get loop rate of publishing actual angles and how many matched prior
         query_times = []
