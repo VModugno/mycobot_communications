@@ -2,7 +2,7 @@
 
 set -eux -o pipefail
 
-if [[ $# -le 2 ]]; then
+if [[ $# -le 1 ]]; then
     echo "Incorrect number of arguments. "
     echo $#
     echo " Usage: 'setup_pi.sh mycobot_23 secret_password'"
