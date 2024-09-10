@@ -77,11 +77,13 @@ class MycobotTopics(object):
         else:
             self.cmd_worker = multiprocessing.Process(target=self.command_arm)
 
+        self.exit = multiprocessing.Event()
+
         if not self.mc.is_controller_connected():
             raise RuntimeError("not connected with atom")
         
     def get_angles(self):
-        while not EXIT_FLAG:
+        while not self.exit.is_set():
             time_since_loop = time.time() - self.last_get_angles_time
             if time_since_loop < self.get_angles_target_seconds:
                 time.sleep(self.get_angles_target_seconds - time_since_loop)
@@ -91,7 +93,7 @@ class MycobotTopics(object):
             self.angle_queries.append(cur_angles)
     
     def command_arm(self):
-        while not EXIT_FLAG:
+        while not self.exit.is_set():
             time_since_loop = time.time() - self.last_command_arm_time
             if time_since_loop < self.command_arm_target_seconds:
                 time.sleep(self.command_arm_target_seconds - time_since_loop)
@@ -104,12 +106,19 @@ class MycobotTopics(object):
             self.mc.send_angles(cmd.angles, cmd.speed)
             self.cmds_sent.append(cmd)
     
+    def set_exit(self, signum, frame):
+        self.exit.set()
+
     def main(self):
-        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGINT, self.set_exit)
         self.mc.send_angles([0] * NUM_JOINTS, 60)
         time.sleep(4)
         self.cmd_worker.start()
         self.get_angle_worker.start()
+
+        while not self.exit.is_set():
+            time.sleep(0.1)
+
         self.cmd_worker.join()
         self.get_angle_worker.join()
 
