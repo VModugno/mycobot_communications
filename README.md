@@ -8,6 +8,8 @@ First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monit
 
 Pick ROS 1 or ROS 2. We recommend ROS 2.
 
+Note, you can optionally upgrade the ubuntu image on the arm. But, we haven't yet found this nescessary. Elephant robotic provides a system image [here](https://www.elephantrobotics.com/en/downloads/) for the mycobot 280 arm. I used the raspberry pi imager tool to flash it to the sd card--importantly I selected to clear the settings the raspberry pi imager has like user/password. I also didn't need to unzip .the .img file to flash it.
+
 ### Ros 1
 
 Then, clone the repo into the catkin workspace on the robot. And build the ros workspace. We will modify our `.bashrc` so that each time we open a terminal we can access the packages here.
@@ -37,10 +39,22 @@ rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{jo
 For this we will go into a docker container. We do this because the Ubuntu version running on the raspberry pi is quite old the ROS2 distro we want to use (humble) doesn't support that old Ubuntu. If you are in a raspberry pi prepared by the lab, it will have docker. If not, install it onto the pi using [this](https://docs.docker.com/engine/install/ubuntu/). You shouldn't need to build any docker image, you can simply pull it from docker hub with the below command.
 
 ```
-sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/catkin_ws/src/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.0.0
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.0.0
 source install/setup.bash
 export ROS_DOMAIN_ID=10
 ros2 run mycobot_interface_2 cobot_comms
 ```
 
 If you want to echo topics and such, it will be easiest to do from the same docker container in a different bash terminal. You can find the container id by opening a new terminal and running `docker ps` and then in that terminal running `docker exec -it 10a72b2d02fc /bin/bash`, replacing `10a72b2d02fc` with your container id. This will put you inside of the same container, but in a new bash terminal where you can load the packages `source install/setup.bash` and then run ros2 introspection commands.
+
+You can also try moving the robot with something like:
+```
+ros2 topic pub /mycobot/angles_goal mycobot_msgs_2/msg/MycobotSetAngles "{joint_6: 30, speed: 30}" --once
+```
+
+## Troubleshooting
+If you can ping the pi, for example the below shows packets sent and received.
+```
+ping 10.42.0.1
+```
+But the pi can't ping your computer, look to your firewall in windows. Try turning it off temporarily.

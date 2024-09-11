@@ -82,12 +82,17 @@ class MycobotTopics(object):
     def get_encoders(self):
         encoders = self.mc.get_encoders()
         self.encoders = encoders
+    
+    @timing
+    def send_cmds(self):
+        self.mc.send_angles([0] * 6, 30)
 
     def main(self):
         signal.signal(signal.SIGINT, signal_handler)
         while not EXIT_FLAG:
             self.get_angles()
             self.get_encoders()
+            self.send_cmds()
 
 
         py_version = sys.version
