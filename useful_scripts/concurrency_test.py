@@ -91,6 +91,7 @@ class MycobotTopics(object):
     
     def command_arm(self, exit_event, my_q):
         while not exit_event.is_set():
+            print("looping", flush=True)
             time_since_loop = time.time() - self.last_command_arm_time
             if time_since_loop < self.command_arm_target_seconds:
                 time.sleep(self.command_arm_target_seconds - time_since_loop)
