@@ -44,7 +44,7 @@ class MycobotTopics(object):
         baud = 1000000
 
 
-        self.use_threading = False
+        self.use_threading = True
 
         self.angle_queries = multiprocessing.Queue()
 
@@ -54,7 +54,7 @@ class MycobotTopics(object):
         self.last_get_angles_time = time.time()
         if self.use_threading:
             self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit, self.angle_queries))
-            self.mc = MyCobot(port, baud, thread_lock=True) # we can probably try thread lock true/false here
+            self.mc = MyCobot(port, baud, thread_lock=False) # we can probably try thread lock true/false here
         else:
             self.get_angle_worker = multiprocessing.Process(target=self.get_angles, args=(self.exit, self.angle_queries))
             self.mc = MyCobot(port, baud, thread_lock=False) # we probably cannot try the same here
