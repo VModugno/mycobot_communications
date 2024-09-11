@@ -14,11 +14,6 @@ TIMINGS_DICT = {}
 def log_msg(msg):
     print(msg)
 
-def signal_handler(sig, frame):
-    global EXIT_FLAG
-    EXIT_FLAG = True
-    log_msg('You pressed Ctrl+C!')
-
 def timing(f):
     global TIMINGS_DICT
     @wraps(f)
@@ -70,8 +65,8 @@ class MycobotTopics(object):
         self.encoders = []
         self.time_to_run = 10
 
-        # if not self.mc.is_controller_connected():
-        #     raise RuntimeError("not connected with atom")
+        if not self.mc.is_controller_connected():
+            raise RuntimeError("not connected with atom")
 
     @timing
     def get_angles(self):
