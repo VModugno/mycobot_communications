@@ -56,7 +56,7 @@ class MycobotTopics(object):
             self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit, self.angle_queries))
             self.mc = MyCobot(port, baud, thread_lock=True) # we can probably try thread lock true/false here
         else:
-            self.get_angle_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit, self.angle_queries))
+            self.get_angle_worker = multiprocessing.Process(target=self.get_angles, args=(self.exit, self.angle_queries))
             self.mc = MyCobot(port, baud, thread_lock=False) # we probably cannot try the same here
 
         self.command_arm_target_hz = 100
