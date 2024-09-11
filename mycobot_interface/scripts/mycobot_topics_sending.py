@@ -115,7 +115,7 @@ class MycobotTopics(object):
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
 
     def gripper_status_callback(self, msg):
-        state = msg.state
+        state = int(msg.state)
         speed = msg.speed
         self.cur_gripper_state = CurGripperState(state, speed)
 
