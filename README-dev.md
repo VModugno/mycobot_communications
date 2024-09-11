@@ -32,10 +32,12 @@ number of calls
 {'get_angles': 341, 'get_encoders': 341}
 ```
 ## useful_scripts/speed_tests.py
-Because we synchronize reads/writes, if we are reading at 100HZ but can only write at 50HZ, we limit both reads and writes to 50HZ. We are very interested in whether we can read/write without synchronizing, and the concurrency_test.py tries to test this.
+Because we synchronize reads/writes, if we are reading at 100HZ but can only write at 50HZ, we limit both reads and writes to 50HZ. We are very interested in whether we can read/write without synchronizing, and the concurrency_test.py tries to test this. The `pymycobot` exposes an argument about threadlock on init that we set to False for theses tests.
 
-If we use multiprocessing and try and use the serial port from multiple processes it throws a `serial.serialutil.SerialException` warning about access from multiple processes. This is not unexpected given some of the notes [here](https://stackoverflow.com/questions/30316722/what-is-the-best-practice-for-locking-serial-ports-and-other-devices-in-linux). When we use python threading (which doesn't do 2 things at the same time given the global interpreter lock) we can run the program but performance is worse than it was previously.
+If we use multiprocessing and try and use the serial port from multiple processes it throws a `serial.serialutil.SerialException` warning about access from multiple processes. This is not unexpected given some of the notes [here](https://stackoverflow.com/questions/30316722/what-is-the-best-practice-for-locking-serial-ports-and-other-devices-in-linux). When we use python threading (which doesn't do 2 things at the same time given the global interpreter lock) we get the same error and sometimes it dies. When it doesn't performance is much worse.
 
+
+With multiprocessing
 ```
 root@er:/mnt_folder/mycobot_communications/useful_scripts# python3 concurrency_test.py
 sending command
