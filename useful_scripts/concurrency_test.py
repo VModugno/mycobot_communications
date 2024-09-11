@@ -22,7 +22,7 @@ EXIT_FLAG = False
 NUM_JOINTS = 6
 
 def log_msg(msg):
-    print(msg)
+    print(msg, flush=True)
 
 class CurRealAngles:
     def __init__(self, angles, query_time):
@@ -77,9 +77,8 @@ class MycobotTopics(object):
             raise RuntimeError("not connected with atom")
         
     def get_angles(self, exit_event, my_q):
-        print("getting angles")
+        log_msg("getting angles")
         while not exit_event.is_set():
-            print(exit_event.is_set(), flush=True)
             time_since_loop = time.time() - self.last_get_angles_time
             if time_since_loop < self.get_angles_target_seconds:
                 time.sleep(self.get_angles_target_seconds - time_since_loop)
@@ -87,7 +86,7 @@ class MycobotTopics(object):
             angles = self.mc.get_angles()
             cur_angles = CurRealAngles(angles, self.last_get_angles_time)
             my_q.put(cur_angles)
-        print("done getting angles")
+        log_msg("done getting angles")
     
     def command_arm(self, exit_event, my_q):
         """Note this process won't exit until the q is drained.
@@ -96,6 +95,7 @@ class MycobotTopics(object):
             exit_event (_type_): _description_
             my_q (_type_): _description_
         """
+        log_msg("sending command")
         while not exit_event.is_set():
             time_since_loop = time.time() - self.last_command_arm_time
             if time_since_loop < self.command_arm_target_seconds:
@@ -108,6 +108,7 @@ class MycobotTopics(object):
             cmd = CmdAngles([cur_angle for i in range(NUM_JOINTS)], self.command_speed, self.last_command_arm_time)
             self.mc.send_angles(cmd.angles, cmd.speed)
             my_q.put(cmd)
+        log_msg("done sending commands")
     
     def set_exit(self):
         log_msg("setting exit")
