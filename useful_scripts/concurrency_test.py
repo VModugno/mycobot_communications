@@ -117,8 +117,8 @@ class MycobotTopics(object):
         self.mc.send_angles([0] * NUM_JOINTS, 60)
         time.sleep(4)
         self.cmd_worker.start()
-        # self.get_angle_worker.start()
-        time.sleep(10)
+        self.get_angle_worker.start()
+        time.sleep(11)
         self.set_exit()
 
         log_msg("doing metrics")
@@ -144,7 +144,6 @@ class MycobotTopics(object):
         last_cmd = self.cmds_sent.get()
         while self.cmds_sent.qsize() > 0:
             new_cmd = self.cmds_sent.get()
-            log_msg(new_cmd.query_time)
             time_to_query = new_cmd.query_time - last_cmd.query_time
             matched_prior = new_cmd.angles == last_cmd.angles
             query_times.append(time_to_query)
@@ -157,7 +156,7 @@ class MycobotTopics(object):
     
         log_msg("waiting on workers to join")
         self.cmd_worker.join()
-        # self.get_angle_worker.join()
+        self.get_angle_worker.join()
 
 def main():
     arm = MycobotTopics()
