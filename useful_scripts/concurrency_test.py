@@ -119,7 +119,7 @@ class MycobotTopics(object):
         self.mc.send_angles([0] * NUM_JOINTS, 60)
         time.sleep(4)
         self.cmd_worker.start()
-        self.get_angle_worker.start()
+        # self.get_angle_worker.start()
 
         while not self.exit.is_set():
             time.sleep(0.1)
@@ -127,7 +127,7 @@ class MycobotTopics(object):
         #self.cmd_worker.terminate()
         #self.get_angle_worker.terminate()
         self.cmd_worker.join()
-        self.get_angle_worker.join()
+        # self.get_angle_worker.join()
 
         log_msg("doing metrics")
 
