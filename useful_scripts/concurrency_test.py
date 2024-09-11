@@ -124,20 +124,20 @@ class MycobotTopics(object):
         log_msg("doing metrics")
 
         # get loop rate of publishing actual angles and how many matched prior
-        # query_times = []
-        # matched_priors = []
-        # last_angles = self.angle_queries.get()
-        # while self.angle_queries.qsize() > 0:
-        #     new_angles = self.angle_queries.get()
-        #     log_msg(new_angles.query_time)
-        #     time_to_query = new_angles.query_time - last_angles.query_time
-        #     matched_prior = new_angles.angles == last_angles.angles
-        #     query_times.append(time_to_query)
-        #     matched_priors.append(matched_prior)
-        #     last_angles = new_angles
-        # loop_rate = 1 / (sum(query_times) / len(query_times))
-        # log_msg(f"{len(query_times)} joint angle queries, avg loop rate: {loop_rate}")
-        # log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(query_times):.2f}%")
+        query_times = []
+        matched_priors = []
+        last_angles = self.angle_queries.get()
+        while self.angle_queries.qsize() > 0:
+            new_angles = self.angle_queries.get()
+            log_msg(new_angles.query_time)
+            time_to_query = new_angles.query_time - last_angles.query_time
+            matched_prior = new_angles.angles == last_angles.angles
+            query_times.append(time_to_query)
+            matched_priors.append(matched_prior)
+            last_angles = new_angles
+        loop_rate = 1 / (sum(query_times) / len(query_times))
+        log_msg(f"{len(query_times)} joint angle queries, avg loop rate: {loop_rate}")
+        log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(query_times):.2f}%")
 
         query_times = []
         matched_priors = []
@@ -155,8 +155,12 @@ class MycobotTopics(object):
     
     
         log_msg("waiting on workers to join")
+        log_msg(f"real angle q has {self.angle_queries.qsize()} entries")
+        log_msg(f"cmd q has {self.cmds_sent.qsize()} entries")
         self.cmd_worker.join()
+        log_msg(f"cmd worker exited")
         self.get_angle_worker.join()
+        log_msg(f"get angle worker exited")
 
 def main():
     arm = MycobotTopics()
