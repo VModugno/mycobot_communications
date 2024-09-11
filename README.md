@@ -6,7 +6,7 @@ This is a repo to implement control of the MyCobot 280 and specifically the vers
 
 First plugin the robot to power. Plug a mouse and keyboard into it. Plug a monitor into it. Plug the gripper into the arm, there is a three prong slot near the top of the arm on a side adjacent to the side with the USB C connector (stats on gripper [here](https://docs.elephantrobotics.com/docs/gitbook-en/2-serialproduct/2.7-accessories/2.7.3%20grip/2.7.3.1-ag.html)). The gripper has a pretty short cable by default, you may need to use one of the extension cables provided to give it more leeway to rotate. Start the robot and connect to wifi using the Ubuntu Desktop Wifi manager.
 
-Pick ROS 1 or ROS 2. We recommend ROS 2.
+Pick ROS 1 or ROS 2. We recommend ROS 2. If you use ROS1 checkout the branch `ros-noetic-1.0.0` in this repo. Otherwise use `main` for ROS2.
 
 Note, you can optionally upgrade the ubuntu image on the arm. But, we haven't yet found this nescessary. Elephant robotic provides a system image [here](https://www.elephantrobotics.com/en/downloads/) for the mycobot 280 arm. I used the raspberry pi imager tool to flash it to the sd card--importantly I selected to clear the settings the raspberry pi imager has like user/password. I also didn't need to unzip .the .img file to flash it.
 
