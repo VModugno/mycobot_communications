@@ -120,6 +120,7 @@ class MycobotTopics(object):
         self.get_angle_worker.start()
         time.sleep(10.2)
         self.set_exit()
+        time.sleep(0.5)
 
         log_msg("doing metrics")
 
