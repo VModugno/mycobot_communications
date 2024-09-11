@@ -144,8 +144,8 @@ class MycobotTopics(object):
         #     matched_priors.append(matched_prior)
         #     last_angles = new_angles
         # loop_rate = 1 / (sum(query_times) / len(query_times))
-        # log_msg(f"{len(self.angle_queries)} joint angle queries, avg loop rate: {loop_rate}")
-        # log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(self.angle_queries):.2f}%")
+        # log_msg(f"{len(query_times)} joint angle queries, avg loop rate: {loop_rate}")
+        # log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(query_times):.2f}%")
 
         query_times = []
         matched_priors = []
@@ -160,7 +160,7 @@ class MycobotTopics(object):
             last_cmd = new_cmd
         loop_rate = 1 / (sum(query_times) / len(query_times))
         log_msg(f"{len(query_times)} commands sent, avg loop rate: {loop_rate}")
-        log_msg(f"{sum(matched_priors)} matched the command sent, {sum(matched_priors) / len(self.cmds_sent):.2f}%")
+        log_msg(f"{sum(matched_priors)} matched the command sent, {sum(matched_priors) / len(query_times):.2f}%")
 
 def main():
     arm = MycobotTopics()
