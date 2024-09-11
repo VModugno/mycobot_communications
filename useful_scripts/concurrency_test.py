@@ -103,6 +103,7 @@ class MycobotTopics(object):
             cmd = CmdAngles([cur_angle for i in range(NUM_JOINTS)], self.command_speed, self.last_command_arm_time)
             self.mc.send_angles(cmd.angles, cmd.speed)
             my_q.put(cmd)
+        print("done looping", flush=True)
     
     def set_exit(self):
         log_msg("setting exit")
@@ -113,7 +114,7 @@ class MycobotTopics(object):
         time.sleep(4)
         self.cmd_worker.start()
         # self.get_angle_worker.start()
-        time.sleep(15)
+        time.sleep(10)
         self.set_exit()
         log_msg("waiting on workers to join")
         #self.cmd_worker.terminate()
