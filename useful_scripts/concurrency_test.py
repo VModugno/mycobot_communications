@@ -50,7 +50,6 @@ class MycobotTopics(object):
         port = "/dev/ttyAMA0"
         baud = 1000000
 
-        self.mc = MyCobot(port, baud, thread_lock=True)
 
         self.use_threading = False
 
@@ -62,8 +61,10 @@ class MycobotTopics(object):
         self.last_get_angles_time = time.time()
         if self.use_threading:
             self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit,))
+            self.mc = MyCobot(port, baud, thread_lock=True)
         else:
             self.get_angle_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit,))
+            self.mc = MyCobot(port, baud, thread_lock=False)
 
         self.command_arm_target_hz = 100
         self.command_arm_target_seconds = 1 / self.command_arm_target_hz
