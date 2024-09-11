@@ -118,7 +118,7 @@ class MycobotTopics(object):
         time.sleep(4)
         self.cmd_worker.start()
         self.get_angle_worker.start()
-        time.sleep(11)
+        time.sleep(10.2)
         self.set_exit()
 
         log_msg("doing metrics")
