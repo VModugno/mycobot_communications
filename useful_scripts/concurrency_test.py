@@ -9,7 +9,6 @@ even as we command the robot. We need to check loop rate in HZ, as well as accur
 from functools import wraps
 import math
 import pprint
-import signal
 import sys
 import multiprocessing
 import threading
@@ -24,12 +23,6 @@ NUM_JOINTS = 6
 
 def log_msg(msg):
     print(msg)
-
-
-def signal_handler(sig, frame):
-    global EXIT_FLAG
-    EXIT_FLAG = True
-    log_msg('You pressed Ctrl+C!')
 
 class CurRealAngles:
     def __init__(self, angles, query_time):
@@ -110,19 +103,17 @@ class MycobotTopics(object):
             self.mc.send_angles(cmd.angles, cmd.speed)
             my_q.put(cmd)
     
-    def set_exit(self, signum, frame):
+    def set_exit(self):
         log_msg("setting exit")
         self.exit.set()
 
     def main(self):
-        signal.signal(signal.SIGINT, self.set_exit)
         self.mc.send_angles([0] * NUM_JOINTS, 60)
         time.sleep(4)
         self.cmd_worker.start()
         # self.get_angle_worker.start()
-
-        while not self.exit.is_set():
-            time.sleep(0.1)
+        time.sleep(15)
+        self.set_exit()
         log_msg("waiting on workers to join")
         #self.cmd_worker.terminate()
         #self.get_angle_worker.terminate()
