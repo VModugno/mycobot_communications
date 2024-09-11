@@ -135,7 +135,9 @@ class MycobotTopics(object):
             query_times.append(time_to_query)
             matched_priors.append(matched_prior)
             last_angles = new_angles
-        loop_rate = 1 / (sum(query_times) / len(query_times))
+        loop_rate = None
+        if len(query_times) != 0:
+            loop_rate = 1 / (sum(query_times) / len(query_times))
         log_msg(f"{len(query_times)} joint angle queries, avg loop rate: {loop_rate}")
         log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(query_times):.2f}%")
 
