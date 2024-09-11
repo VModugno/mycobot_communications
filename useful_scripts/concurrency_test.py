@@ -60,11 +60,11 @@ class MycobotTopics(object):
         self.get_angles_target_seconds = 1 / self.get_angles_target_hz
         self.last_get_angles_time = time.time()
         if self.use_threading:
-            self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit,))
-            self.mc = MyCobot(port, baud, thread_lock=True)
+            self.get_angle_worker = threading.Thread(target=self.get_angles, args=(self.exit, self.angle_queries))
+            self.mc = MyCobot(port, baud, thread_lock=True) # we can probably try thread lock true/false here
         else:
-            self.get_angle_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit,))
-            self.mc = MyCobot(port, baud, thread_lock=False)
+            self.get_angle_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit, self.angle_queries))
+            self.mc = MyCobot(port, baud, thread_lock=False) # we probably cannot try the same here
 
         self.command_arm_target_hz = 100
         self.command_arm_target_seconds = 1 / self.command_arm_target_hz
@@ -75,15 +75,15 @@ class MycobotTopics(object):
         self.counter_incr = 1
         self.cmds_sent = multiprocessing.Queue()
         if self.use_threading:
-            self.cmd_worker = threading.Thread(target=self.command_arm, args=(self.exit,))
+            self.cmd_worker = threading.Thread(target=self.command_arm, args=(self.exit, self.cmds_sent))
         else:
-            self.cmd_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit,))
+            self.cmd_worker = multiprocessing.Process(target=self.command_arm, args=(self.exit, self.cmds_sent))
 
 
         if not self.mc.is_controller_connected():
             raise RuntimeError("not connected with atom")
         
-    def get_angles(self, exit_event):
+    def get_angles(self, exit_event, my_q):
         print("getting angles")
         while not exit_event.is_set():
             print(exit_event.is_set(), flush=True)
@@ -93,10 +93,10 @@ class MycobotTopics(object):
             self.last_get_angles_time = time.time()
             angles = self.mc.get_angles()
             cur_angles = CurRealAngles(angles, self.last_get_angles_time)
-            self.angle_queries.put(cur_angles)
+            my_q.put(cur_angles)
         print("done getting angles")
     
-    def command_arm(self, exit_event):
+    def command_arm(self, exit_event, my_q):
         while not exit_event.is_set():
             time_since_loop = time.time() - self.last_command_arm_time
             if time_since_loop < self.command_arm_target_seconds:
@@ -108,7 +108,7 @@ class MycobotTopics(object):
 
             cmd = CmdAngles([cur_angle for i in range(NUM_JOINTS)], self.command_speed, self.last_command_arm_time)
             self.mc.send_angles(cmd.angles, cmd.speed)
-            self.cmds_sent.put(cmd)
+            my_q.put(cmd)
     
     def set_exit(self, signum, frame):
         log_msg("setting exit")
@@ -124,28 +124,28 @@ class MycobotTopics(object):
         while not self.exit.is_set():
             time.sleep(0.1)
         log_msg("waiting on workers to join")
-        self.cmd_worker.terminate()
-        self.get_angle_worker.terminate()
+        #self.cmd_worker.terminate()
+        #self.get_angle_worker.terminate()
         self.cmd_worker.join()
         self.get_angle_worker.join()
 
         log_msg("doing metrics")
 
         # get loop rate of publishing actual angles and how many matched prior
-        query_times = []
-        matched_priors = []
-        last_angles = self.angle_queries.get()
-        while self.angle_queries.qsize() > 0:
-            new_angles = self.angle_queries.get()
-            log_msg(new_angles.query_time)
-            time_to_query = new_angles.query_time - last_angles.query_time
-            matched_prior = new_angles.angles == last_angles.angles
-            query_times.append(time_to_query)
-            matched_priors.append(matched_prior)
-            last_angles = new_angles
-        loop_rate = 1 / (sum(query_times) / len(query_times))
-        log_msg(f"{len(self.angle_queries)} joint angle queries, avg loop rate: {loop_rate}")
-        log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(self.angle_queries):.2f}%")
+        # query_times = []
+        # matched_priors = []
+        # last_angles = self.angle_queries.get()
+        # while self.angle_queries.qsize() > 0:
+        #     new_angles = self.angle_queries.get()
+        #     log_msg(new_angles.query_time)
+        #     time_to_query = new_angles.query_time - last_angles.query_time
+        #     matched_prior = new_angles.angles == last_angles.angles
+        #     query_times.append(time_to_query)
+        #     matched_priors.append(matched_prior)
+        #     last_angles = new_angles
+        # loop_rate = 1 / (sum(query_times) / len(query_times))
+        # log_msg(f"{len(self.angle_queries)} joint angle queries, avg loop rate: {loop_rate}")
+        # log_msg(f"{sum(matched_priors)} matched the prior joint angle, {sum(matched_priors) / len(self.angle_queries):.2f}%")
 
         query_times = []
         matched_priors = []
@@ -159,7 +159,7 @@ class MycobotTopics(object):
             matched_priors.append(matched_prior)
             last_cmd = new_cmd
         loop_rate = 1 / (sum(query_times) / len(query_times))
-        log_msg(f"{len(self.cmds_sent)} commands sent, avg loop rate: {loop_rate}")
+        log_msg(f"{len(query_times)} commands sent, avg loop rate: {loop_rate}")
         log_msg(f"{sum(matched_priors)} matched the command sent, {sum(matched_priors) / len(self.cmds_sent):.2f}%")
 
 def main():
