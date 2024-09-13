@@ -6,6 +6,8 @@ Notes for developpers...
 by default on the pi's with Ubuntu 18 we have pymycobot==2.7.5 installed and python 2.
 this is quite old and slow.
 
+## useful_scripts/speed_tests.py
+
 ```
 python_version '2.7.17 (default, Feb 27 2021, 15:10:58) \n[GCC 7.5.0]'
 pymycobot_version '2.7.5'
@@ -28,6 +30,37 @@ average timings
 {'get_angles': 0.009076217752048346, 'get_encoders': 0.008493457721475282}
 number of calls
 {'get_angles': 341, 'get_encoders': 341}
+```
+## useful_scripts/speed_tests.py
+Because we synchronize reads/writes, if we are reading at 100HZ but can only write at 50HZ, we limit both reads and writes to 50HZ. We are very interested in whether we can read/write without synchronizing, and the concurrency_test.py tries to test this. The `pymycobot` exposes an argument about threadlock on init that we set to False for theses tests.
+
+If we use multiprocessing and try and use the serial port from multiple processes it throws a `serial.serialutil.SerialException` warning about access from multiple processes. This is not unexpected given some of the notes [here](https://stackoverflow.com/questions/30316722/what-is-the-best-practice-for-locking-serial-ports-and-other-devices-in-linux). When we use python threading (which doesn't do 2 things at the same time given the global interpreter lock) we get the same error and sometimes it dies. When it doesn't performance is much worse.
+
+
+With multiprocessing
+```
+root@er:/mnt_folder/mycobot_communications/useful_scripts# python3 concurrency_test.py
+sending command
+getting angles
+Process Process-1:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt_folder/mycobot_communications/useful_scripts/concurrency_test.py", line 86, in get_angles
+    angles = self.mc.get_angles()
+  File "/usr/local/lib/python3.10/dist-packages/pymycobot/generate.py", line 199, in get_angles
+    return self._mesg(ProtocolCode.GET_ANGLES, has_reply=True)
+  File "/usr/local/lib/python3.10/dist-packages/pymycobot/mycobot.py", line 93, in _mesg
+    return self._res(real_command, has_reply, genre)
+  File "/usr/local/lib/python3.10/dist-packages/pymycobot/mycobot.py", line 100, in _res
+    data = self._read(genre, _class=self.__class__.__name__)
+  File "/usr/local/lib/python3.10/dist-packages/pymycobot/common.py", line 727, in read
+    data = self._serial_port.read()
+  File "/usr/local/lib/python3.10/dist-packages/serial/serialposix.py", line 595, in read
+    raise SerialException(
+serial.serialutil.SerialException: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
 ```
 
 # notes on docker
