@@ -21,6 +21,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MycobotSetCoords.msg"
   "msg/MycobotGripperStatus.msg"
   "msg/MycobotPumpStatus.msg"
+  "msg/MycobotPose.msg"
 )
 
 
