@@ -7,11 +7,9 @@ RUN apt update && apt install git nano python3-pip python3-colcon-common-extensi
 
 WORKDIR /home/ubuntu/ros2_ws/src
 RUN git clone https://github.com/VModugno/mycobot_communications
-RUN rm -rf mycobot_communications/mycobot_msgs
-RUN rm -rf mycobot_communications/mycobot_interface
 
 # opencv-python is a hidden dep of pymycobot
-RUN pip install pymycobot opencv-python
+RUN pip install pymycobot==3.4.9 opencv-python
 
 WORKDIR /home/ubuntu/ros2_ws/
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'

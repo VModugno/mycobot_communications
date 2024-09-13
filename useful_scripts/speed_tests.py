@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 from functools import wraps
 import pprint
-import signal
 import sys
 from time import time
 
@@ -14,11 +13,6 @@ TIMINGS_DICT = {}
 
 def log_msg(msg):
     print(msg)
-
-def signal_handler(sig, frame):
-    global EXIT_FLAG
-    EXIT_FLAG = True
-    log_msg('You pressed Ctrl+C!')
 
 def timing(f):
     global TIMINGS_DICT
@@ -69,6 +63,7 @@ class MycobotTopics(object):
 
         self.cur_angles = CurRealAngles([])
         self.encoders = []
+        self.time_to_run = 10
 
         if not self.mc.is_controller_connected():
             raise RuntimeError("not connected with atom")
@@ -88,8 +83,8 @@ class MycobotTopics(object):
         self.mc.send_angles([0] * 6, 30)
 
     def main(self):
-        signal.signal(signal.SIGINT, signal_handler)
-        while not EXIT_FLAG:
+        start_time = time()
+        while time() - start_time < self.time_to_run:
             self.get_angles()
             self.get_encoders()
             self.send_cmds()
