@@ -32,7 +32,7 @@ NUM_ANGLES = 6
 JOINT_LIMITS = np.array([[-165, 165], [-165, 165], [-165, 165], [-165, 165], [-165, 165], [-179, 179]])
 
 def check_angles(target_angles):
-    are_angles_ok = np.where(target_angles < JOINT_LIMITS[0, :], 1, 0) + np.where(target_angles > JOINT_LIMITS[1, :], 1, 0)
+    are_angles_ok = np.where(target_angles < JOINT_LIMITS[:, 0], 1, 0) + np.where(target_angles > JOINT_LIMITS[:, 1], 1, 0)
     return bool(np.sum(are_angles_ok))
 
 
