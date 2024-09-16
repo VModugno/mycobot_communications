@@ -33,7 +33,7 @@ JOINT_LIMITS = np.array([[-165, 165], [-165, 165], [-165, 165], [-165, 165], [-1
 
 def check_angles(target_angles):
     are_angles_ok = np.where(target_angles < JOINT_LIMITS[:, 0], 1, 0) + np.where(target_angles > JOINT_LIMITS[:, 1], 1, 0)
-    return np.sum(are_angles_ok) > 0
+    return np.sum(are_angles_ok) == 0
 
 
 class CurAngles:
