@@ -167,7 +167,7 @@ class MycobotController(Node):
 
         angles_ok = check_angles(cmd_angles_arr)
         if not angles_ok:
-            self.get_logger().error(f"command angles invalid. Commanded:\n{np.array_str(cmd_angles_arr)}\nLimits:\n{np.array_str}")
+            self.get_logger().error(f"command angles invalid. Commanded:\n{np.array_str(cmd_angles_arr)}\nLimits:\n{np.array_str(JOINT_LIMITS)}")
             return
 
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
