@@ -52,6 +52,11 @@ You can also try moving the robot with something like:
 ros2 topic pub /mycobot/angles_goal mycobot_msgs_2/msg/MycobotSetAngles "{joint_6: 30, speed: 30}" --once
 ```
 
+or the gripper with:
+```
+ros2 topic pub /mycobot/gripper_status mycobot_msgs_2/msg/MycobotGripperStatus "{state: 0, speed: 30}" --once
+```
+
 ## Troubleshooting
 If you can ping the pi, for example the below shows packets sent and received.
 ```
