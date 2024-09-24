@@ -18,15 +18,9 @@ RUN git clone -b msg-rename-angle-bounding https://github.com/VModugno/mycobot_c
 # opencv-python is a hidden dep of pymycobot
 RUN pip install pymycobot==3.4.9 opencv-python numpy
 
-WORKDIR ${TMP}
 # installing realsense stuff
-RUN apt install curl apt-transport-https -y
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
-RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list
-RUN apt-get update
-RUN apt-get install librealsense2-dkms
-RUN apt-get install librealsense2-utils
+RUN apt install ros-humble-librealsense2*
+RUN apt install ros-humble-realsense2-*
 
 WORKDIR ${ROS_WORKSPACE}
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
