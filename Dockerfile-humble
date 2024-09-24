@@ -1,5 +1,7 @@
 FROM ros:humble-ros-base
 
+# sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder -v /dev:/dev --device-cgroup-rule "c 81:* rmw" --device-cgroup-rule "c 189:* rmw" --rm mzandtheraspberrypi/mycobot-ros2:1.1.0
+
 ENV ROS_WORKSPACE="/ros2_ws"
 
 RUN mkdir -p ${ROS_WORKSPACE}
