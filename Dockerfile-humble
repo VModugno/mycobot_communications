@@ -13,7 +13,7 @@ WORKDIR "${ROS_WORKSPACE}/src"
 # libgl1 is hidden dep of opencv
 RUN apt update && apt install git nano python3-pip python3-colcon-common-extensions libgl1 -y
 
-RUN git clone https://github.com/VModugno/mycobot_communications
+RUN git clone -b msg-rename-angle-bounding https://github.com/VModugno/mycobot_communications
 
 # opencv-python is a hidden dep of pymycobot
 RUN pip install pymycobot==3.4.9 opencv-python numpy
@@ -23,8 +23,7 @@ WORKDIR ${TMP}
 RUN apt install curl apt-transport-https -y
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
-RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | \
-    sudo tee /etc/apt/sources.list.d/librealsense.list
+RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list
 RUN apt-get update
 RUN apt-get install librealsense2-dkms
 RUN apt-get install librealsense2-utils
