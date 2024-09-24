@@ -19,8 +19,8 @@ RUN git clone -b msg-rename-angle-bounding https://github.com/VModugno/mycobot_c
 RUN pip install pymycobot==3.4.9 opencv-python numpy
 
 # installing realsense stuff
-RUN apt install ros-humble-librealsense2*
-RUN apt install ros-humble-realsense2-*
+RUN apt install ros-humble-librealsense2* -y
+RUN apt install ros-humble-realsense2-* -y
 
 WORKDIR ${ROS_WORKSPACE}
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
