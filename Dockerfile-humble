@@ -23,4 +23,5 @@ RUN apt install ros-humble-librealsense2* -y
 RUN apt install ros-humble-realsense2-* -y
 
 WORKDIR ${ROS_WORKSPACE}
+RUN echo ". /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
