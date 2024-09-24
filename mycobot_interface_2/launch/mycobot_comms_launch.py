@@ -26,7 +26,11 @@ def generate_launch_description():
             condition=IfCondition(
                 PythonExpression([
                     use_realsense])
-                )
+                ),
+            remappings=[('/camera/realsense2_camera_node/color/camera_info', '/camera/realsense2_camera_node/color/image_rect_raw/camera_info'),
+                        ('/camera/realsense2_camera_node/depth/camera_info', '/camera/realsense2_camera_node/depth/image_rect_raw/camera_info'),
+                        ('/camera/realsense2_camera_node/infra1/camera_info', '/camera/realsense2_camera_node/infra1/image_rect_raw/camera_info'),
+                        ('/camera/realsense2_camera_node/infra2/camera_info', '/camera/realsense2_camera_node/infra2/image_rect_raw/camera_info')]
             )
 
     return LaunchDescription([use_realsense_launch_arg, cobot_node, realsense_node])
