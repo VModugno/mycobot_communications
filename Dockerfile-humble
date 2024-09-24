@@ -1,13 +1,14 @@
 FROM ros:humble-ros-base
 
 ENV ROS_WORKSPACE="/ros2_ws"
-RUN echo ${ROS_WORKSPACE}/src
+
 RUN mkdir -p ${ROS_WORKSPACE}
 ENV TMP="/tmp"
-RUN mkdir -p ${ROS_WORKSPACE}
-WORKDIR ${ROS_WORKSPACE}/src
-RUN mkdir -p src
+RUN mkdir -p ${TMP}
+RUN mkdir -p "${ROS_WORKSPACE}/src"
+WORKDIR "${ROS_WORKSPACE}/src"
 
+# install cobot stuff
 
 # libgl1 is hidden dep of opencv
 RUN apt update && apt install git nano python3-pip python3-colcon-common-extensions libgl1 -y
@@ -17,7 +18,7 @@ RUN git clone https://github.com/VModugno/mycobot_communications
 # opencv-python is a hidden dep of pymycobot
 RUN pip install pymycobot==3.4.9 opencv-python numpy
 
-WORKDIR ${ROS_WORKSPACE}
+WORKDIR ${TMP}
 # installing realsense stuff
 RUN apt install curl apt-transport-https -y
 RUN mkdir -p /etc/apt/keyrings
@@ -28,4 +29,5 @@ RUN apt-get update
 RUN apt-get install librealsense2-dkms
 RUN apt-get install librealsense2-utils
 
+WORKDIR ${ROS_WORKSPACE}
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
