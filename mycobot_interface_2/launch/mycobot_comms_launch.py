@@ -29,4 +29,4 @@ def generate_launch_description():
                 )
             )
 
-    return LaunchDescription([cobot_node, realsense_node])
+    return LaunchDescription([use_realsense_launch_arg, cobot_node, realsense_node])
