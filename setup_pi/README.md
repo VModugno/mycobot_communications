@@ -16,12 +16,12 @@ export ROS_DOMAIN_ID=10
 ros2 launch mycobot_interface_2 mycobot_comms_launch.py use_realsense:=True
 ```
 
-From here on your client computer connect to the robot's wifi network, then test that the inverse kinematics demo works and that in rviz2 you can see the camera.
+From here on your client computer connect to the robot's wifi network, then test that the inverse kinematics demo works. With the below command. You should see the robot arm move and revolve around a point above the robot.
 ```
 ros2 run mycobot_client_2 cobot_ik_demo
 ```
 
-Add camera topic through gui, select compressed color camera. Then edit the frame to be camera_link. Then ensure you see an image.
+From here we will test that the realsense camera works. Run the below command to bring up rviz2. Then add the color camera topic through the gui, selecting color camera. Then edit the frame to be camera_link. Then ensure you see an image.
 ```
 rviz2
 ```
