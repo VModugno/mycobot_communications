@@ -36,4 +36,5 @@ rm -rf /home/${USER}/Documents/donkeycar
 rm -rf /home/${USER}/Documents/mycobot_ros
 rm -rf /home/${USER}/Documents/aibot_ws
 rm -rf /home/${USER}/Desktop/mycobot_ros
+sed -i '/^source ~\/catkin_ws/d' /home/${USER}/.bashrc
 sudo reboot
