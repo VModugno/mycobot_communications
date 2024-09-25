@@ -39,10 +39,10 @@ rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{jo
 For this we will go into a docker container. We do this because the Ubuntu version running on the raspberry pi is quite old the ROS2 distro we want to use (humble) doesn't support that old Ubuntu. If you are in a raspberry pi prepared by the lab, it will have docker. If not, install it onto the pi using [this](https://docs.docker.com/engine/install/ubuntu/). You shouldn't need to build any docker image, you can simply pull it from docker hub with the below command.
 
 ```
-sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.0.0
+sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.1.0
 source install/setup.bash
 export ROS_DOMAIN_ID=10
-ros2 run mycobot_interface_2 cobot_comms
+ros2 launch mycobot_interface_2 mycobot_comms_launch.py use_realsense:=False
 ```
 
 If you want to echo topics and such, it will be easiest to do from the same docker container in a different bash terminal. You can find the container id by opening a new terminal and running `docker ps` and then in that terminal running `docker exec -it 10a72b2d02fc /bin/bash`, replacing `10a72b2d02fc` with your container id. This will put you inside of the same container, but in a new bash terminal where you can load the packages `source install/setup.bash` and then run ros2 introspection commands.
@@ -50,6 +50,11 @@ If you want to echo topics and such, it will be easiest to do from the same dock
 You can also try moving the robot with something like:
 ```
 ros2 topic pub /mycobot/angles_goal mycobot_msgs_2/msg/MycobotSetAngles "{joint_6: 30, speed: 30}" --once
+```
+
+or the gripper with:
+```
+ros2 topic pub /mycobot/gripper_status mycobot_msgs_2/msg/MycobotGripperStatus "{state: 0, speed: 30}" --once
 ```
 
 ## Troubleshooting

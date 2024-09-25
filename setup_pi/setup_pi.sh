@@ -17,7 +17,7 @@ sudo apt update
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh ./get-docker.sh
 sudo usermod -aG docker $USER
-sudo docker pull mzandtheraspberrypi/mycobot-ros2:1.0.0
+sudo docker pull mzandtheraspberrypi/mycobot-ros2:1.1.0
 
 # https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nm-settings-nmcli.html
 # useful options. We want to setup a wifi network and let folks connect to it and get an ip address

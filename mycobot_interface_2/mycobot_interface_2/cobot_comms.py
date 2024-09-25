@@ -9,6 +9,8 @@ from mycobot_msgs_2.msg import (
     MycobotPumpStatus,
 )
 
+import numpy as np
+
 import pymycobot
 from pymycobot.mycobot import MyCobot
 from pymycobot.error import MyCobotDataException
@@ -18,6 +20,20 @@ COBOT_JOIN_REAL_TOPIC = "mycobot/angles_real"
 COBOT_GRIPPER_STATUS_TOPIC = "mycobot/gripper_status"
 COBOT_PUMP_STATUS_TOPIC = "mycobot/pump_status"
 COBOT_END_EFFECTOR_COORDS_TOPIC = "mycobot/coords_real"
+
+NUM_ANGLES = 6
+# the joints have the below min/maxes (from https://www.elephantrobotics.com/en/mycobot-280-pi-2023-specifications/)
+# J1 -165 ~ +165 
+# J2 -165 ~ +165
+# J3 -165 ~ +165 
+# J4 -165 ~ +165 
+# J5 -165 ~ +165
+# J6 -179 ~ +179
+JOINT_LIMITS = np.array([[-165, 165], [-165, 165], [-165, 165], [-165, 165], [-165, 165], [-179, 179]])
+
+def check_angles(target_angles):
+    are_angles_ok = np.where(target_angles < JOINT_LIMITS[:, 0], 1, 0) + np.where(target_angles > JOINT_LIMITS[:, 1], 1, 0)
+    return np.sum(are_angles_ok) == 0
 
 
 class CurAngles:
@@ -147,6 +163,12 @@ class MycobotController(Node):
             msg.joint_6,
         ]
         cur_cmd_speed = int(msg.speed)
+        cmd_angles_arr = np.array(cur_cmd_angles)
+
+        angles_ok = check_angles(cmd_angles_arr)
+        if not angles_ok:
+            self.get_logger().error(f"command angles invalid. Commanded:\n{np.array_str(cmd_angles_arr)}\nLimits:\n{np.array_str(JOINT_LIMITS)}")
+            return
 
         self.cur_angles = CurAngles(cur_cmd_angles, cur_cmd_speed)
         if self.cur_angles != self.prev_angles:
