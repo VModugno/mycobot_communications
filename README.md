@@ -62,4 +62,6 @@ If you can ping the pi, for example the below shows packets sent and received.
 ```
 ping 10.42.0.1
 ```
-But the pi can't ping your computer, look to your firewall in windows. Try turning it off temporarily.
+But the pi can't ping your computer, look to your firewall in windows. You can try clicking on the wifi network properties in windows and making sure it's marked as a private network so that the public firewall isn't activated. You can also try turning it off temporarily.
+
+If that fails try a restart of the pi.

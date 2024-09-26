@@ -29,3 +29,6 @@ RUN pip install pymycobot==3.4.9 opencv-python numpy
 WORKDIR ${ROS_WORKSPACE}
 RUN echo ". /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN /bin/bash -c '. /opt/ros/humble/setup.bash; colcon build --symlink-install'
+
+RUN echo ". /${ROS_WORKSPACE}/install/setup.bash" >> /root/.bashrc
+RUN echo "alias mycobot-launch='ros2 launch mycobot_interface_2 mycobot_comms_launch.py use_realsense:=False'" >> /root/.bashrc
