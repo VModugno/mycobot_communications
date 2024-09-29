@@ -39,7 +39,7 @@ rostopic pub -1 /mycobot/angles_goal mycobot_communication/MycobotSetAngles "{jo
 For this we will go into a docker container. We do this because the Ubuntu version running on the raspberry pi is quite old the ROS2 distro we want to use (humble) doesn't support that old Ubuntu. If you are in a raspberry pi prepared by the lab, it will have docker. If not, install it onto the pi using [this](https://docs.docker.com/engine/install/ubuntu/). You shouldn't need to build any docker image, you can simply pull it from docker hub with the below command.
 
 ```
-sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder --rm mzandtheraspberrypi/mycobot-ros2:1.1.0
+docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder -v /dev:/dev --device-cgroup-rule "c 81:* rmw"  --device-cgroup-rule "c 189:* rmw" --rm mzandtheraspberrypi/mycobot-ros2:1.1.0'
 source install/setup.bash
 export ROS_DOMAIN_ID=10
 ros2 launch mycobot_interface_2 mycobot_comms_launch.py use_realsense:=False
@@ -62,4 +62,6 @@ If you can ping the pi, for example the below shows packets sent and received.
 ```
 ping 10.42.0.1
 ```
-But the pi can't ping your computer, look to your firewall in windows. Try turning it off temporarily.
+But the pi can't ping your computer, look to your firewall in windows. You can try clicking on the wifi network properties in windows and making sure it's marked as a private network so that the public firewall isn't activated. You can also try turning it off temporarily.
+
+If that fails try a restart of the pi.
