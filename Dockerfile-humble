@@ -26,7 +26,10 @@ RUN apt install git nano python3-pip python3-colcon-common-extensions libgl1 -y
 RUN pip install pymycobot==3.4.9 opencv-python numpy
 
 # this is one of the last steps so that if we have to re-run we have the other stuff cached
-RUN git clone https://github.com/VModugno/mycobot_communications
+RUN git clone -b vision --recurse-submodules https://github.com/VModugno/mycobot_communications
+
+RUN pip install pyrealsense2
+RUN sudo apt-get install -y ros-humble-cv-bridge ros-humble-vision-opencv
 
 WORKDIR ${ROS_WORKSPACE}
 RUN echo ". /opt/ros/humble/setup.bash" >> /root/.bashrc

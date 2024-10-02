@@ -1,0 +1,3 @@
+[submodule "realsense_ros2"]
+	path = realsense_ros2
+	url = https://github.com/MZandtheRaspberryPi/realsense_ros2
