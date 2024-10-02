@@ -57,6 +57,15 @@ or the gripper with:
 ros2 topic pub /mycobot/gripper_status mycobot_msgs_2/msg/MycobotGripperStatus "{state: 0, speed: 30}" --once
 ```
 
+## Notes on Joints
+With all joints at zero...
+1. Joint 1 in cobot's command/publish angles api, as you look down at the joint, rotating it clockwise makes the nagle get more negative.
+2. Joint 2 as you look into the joint, from the right side of the robot, rotating it clockwise makes the angle get more negative.
+3. Joint 3 as you look into the joint, from the left side of the robot, rotating it clockwise makes the angle get more positive.
+4. Joint 4 as you look into the joint, from the right side of the robot, rotating it clockwise makes the angle get more negative.
+5. Joint 5 as you look into the joint, from the top of the robot, rotating it clockwise makes the angle get more negative.
+6. Joint 6, as you look into the joint, facing the flange, rotating it clockwise makes it go more negative (till it flips at a certain point.)
+
 ## Troubleshooting
 If you can ping the pi, for example the below shows packets sent and received.
 ```
