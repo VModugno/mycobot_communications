@@ -82,3 +82,10 @@ https://docs.elephantrobotics.com/docs/gitbook-en/4-BasicApplication/4.1-myStudi
 PI	RaspberryPI 4B	ubuntu	v18.04.is recommened
 Atom	atomMain	v4.1 is recommended for robots labelled ER28001202200415 and before，or not lablled; v5.1 is recommended for robots lablled ER28001202200416 and after
 ```
+
+# notes on realsense
+We wanted to integrate a depth camera. We thought about plugging it into the student's laptop which would be much faster than sending frames over the network. But, the realsense is picky about its friends and doesn't talk to every computer. Hence we plugged it into the pi.
+
+On the pi, there is an outstanding issue with the python realsense2 library that we ran into. [here](https://github.com/IntelRealSense/librealsense/issues/6628) is the issue. We can run the ros2 node that is cpp, but it can't publish color pointclouds due to another error (likely pi related) that is also documented (but I lost the link).
+
+Hence, we went with the approach to make a function on the student's computer where they can ask for a frame and get it in open cv format. And they can ask given a pixel of a frame, what is the 3d point for that.

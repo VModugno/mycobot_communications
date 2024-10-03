@@ -31,18 +31,22 @@ We use Raspberry Pi Imager to flash it, selecting Raspberry Pi 4, selecting the 
 ![pi_imager](./pi_imager.PNG)
 
 ## Assemble the Robot
-Assemble the robot together. Start wtih the grid paper on the bottom. Put the mounting plate for the camera on top. Put the G base on top, aligning to markings on grid paper.
+Assemble the robot together. Start with the grid paper on the bottom. Put the mounting plate for the camera on top. Put the G base on top, aligning to markings on grid paper.
 
 From here, plug in the robot and power it on. You should see it boot on your monitor.
 
 ## Setup the Software on the Pi
 
-Git clone this repo, and run it with sudo. It takes the name of the wifi network, which we name after the robot number, and the password. Ask someone for the password we use.
+You will probably want to change the resolution of the raspberry pi 4. To do this go to the search bar in the top left and search for `display` and then change the resolution to 1920x1080p.
+
+Then you will want to disconnect the current wifi by going to the top right wifi symbol, clicking it, then selecting disconnect. Then find the wifi network for the lab and connect to that for internet. Refresh the system time zone as well.
+
+Git clone this repo, and run it with sudo. It takes the name of the wifi network, which we name after the robot number, and the password. Ask someone for the password we use. We don't need to use sudo as the Pi is configured to run sudo commands w/o a password. And if it wasn't it would probably prompt us. We use the `$USER` variable so running with `sudo` will probably break it.
 ```
 cd ~
 git clone https://github.com/VModugno/mycobot_communications/
 cd mycobot_communications/setup_pi
-sudo bash setup_pi_2004.sh mycobot_23 my_wifi_pass
+bash setup_pi_2004.sh mycobot_23 my_wifi_pass
 ```
 
 # testing
