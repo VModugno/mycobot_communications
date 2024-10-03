@@ -41,12 +41,12 @@ You will probably want to change the resolution of the raspberry pi 4. To do thi
 
 Then you will want to disconnect the current wifi by going to the top right wifi symbol, clicking it, then selecting disconnect. Then find the wifi network for the lab and connect to that for internet. Refresh the system time zone as well.
 
-Git clone this repo, and run it with sudo. It takes the name of the wifi network, which we name after the robot number, and the password. Ask someone for the password we use.
+Git clone this repo, and run it with sudo. It takes the name of the wifi network, which we name after the robot number, and the password. Ask someone for the password we use. We don't need to use sudo as the Pi is configured to run sudo commands w/o a password. And if it wasn't it would probably prompt us. We use the `$USER` variable so running with `sudo` will probably break it.
 ```
 cd ~
 git clone https://github.com/VModugno/mycobot_communications/
 cd mycobot_communications/setup_pi
-sudo bash setup_pi_2004.sh mycobot_23 my_wifi_pass
+bash setup_pi_2004.sh mycobot_23 my_wifi_pass
 ```
 
 # testing

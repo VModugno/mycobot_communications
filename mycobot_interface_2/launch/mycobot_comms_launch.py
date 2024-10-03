@@ -27,6 +27,7 @@ def generate_launch_description():
                 PythonExpression([
                     use_realsense])
                 ),
+            parameters=[{"align_depth.enable": "true"}],
             remappings=[('/camera/realsense2_camera_node/color/camera_info', '/camera/realsense2_camera_node/color/image_rect_raw/camera_info'),
                         ('/camera/realsense2_camera_node/depth/camera_info', '/camera/realsense2_camera_node/depth/image_rect_raw/camera_info'),
                         ('/camera/realsense2_camera_node/infra1/camera_info', '/camera/realsense2_camera_node/infra1/image_rect_raw/camera_info'),
