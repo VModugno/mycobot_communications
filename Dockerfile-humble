@@ -1,8 +1,13 @@
+# note, by default dds will try to use shared memory to communicate if using host networking with docker
+# , so containers should have access to this https://answers.ros.org/question/370595/ros2-foxy-nodes-cant-communicate-through-docker-container-border/
+
 FROM ros:humble-ros-base
 
 # sudo docker run -it --network host --device /dev/ttyAMA0 --volume /home/ubuntu/:/mnt_folder -v /dev:/dev --device-cgroup-rule "c 81:* rmw" --device-cgroup-rule "c 189:* rmw" --rm mzandtheraspberrypi/mycobot-ros2:1.1.0
 
 ENV ROS_WORKSPACE="/ros2_ws"
+# https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#the-ros-localhost-only-variable
+ENV ROS_LOCALHOST_ONLY=0
 
 RUN mkdir -p ${ROS_WORKSPACE}
 ENV TMP="/tmp"
